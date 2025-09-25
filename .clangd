@@ -1,0 +1,17 @@
+---
+CompileFlags:
+  Add: [-Wall, -Wextra]
+
+Diagnostics:
+  ClangTidy:
+    Add:
+      - readability-function-cognitive-complexity
+      - performance-unnecessary-value-param
+    Remove:
+      - clang-diagnostic-unused-parameter
+
+InlayHints:
+  Designators: false
+  Enabled: false
+  ParameterNames: false
+  DeducedTypes: false

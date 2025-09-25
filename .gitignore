@@ -2,7 +2,7 @@
 **/*.o
 **/*.obj
 **/*.pdb
-main
-main.exe
+**/*.exe
+
 /.ninja_log
 

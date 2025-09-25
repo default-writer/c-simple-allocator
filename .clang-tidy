@@ -1,0 +1,10 @@
+---
+Checks: '-*,llvm-*'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle: llvm
+User: {}
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: 100
