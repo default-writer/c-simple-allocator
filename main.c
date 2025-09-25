@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h> // Required for va_list, va_start, va_arg, va_end
 #include "func.h"
-#define TRUE 1
-#define FALSE 0
 
 
 // Print current memory status (moved from func.c)
@@ -35,13 +33,8 @@ int main(void) {
     
     // Test 1: Basic allocation
     printf("Test 1: Basic allocation\n");
-    unsigned long long size = vsnprintf_s(NULL, 0, 20, "%s", "Hello, World!");
-    char* str = (char*)rc_alloc(&allocator, size);
+    char* str = (char*)rc_alloc(&allocator, 20);
     if (str) {
-        unsigned long long result = vsnprintf_s(str, 20, 20, "%s", "Hello, World!");
-        if (result < 0 || result >= 20) {
-            printf("Error: String formatting failed or was truncated\n");
-        }
         printf("Allocated string: %s\n", str);
     }
     rc_print_status(&allocator);
