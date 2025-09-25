@@ -1,0 +1,71 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja"
+                ]
+            }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "group": "build",
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "-t",
+                    "clean"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "-t",
+                    "clean",
+                ]
+            }
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "group": "test",
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "test.exe"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "test"
+                ]
+            }
+        }
+    ]
+}
