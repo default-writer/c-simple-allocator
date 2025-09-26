@@ -6,11 +6,9 @@
 #include "reference_counting_allocator_api.h"
 #include "reference_counting_allocator.h"
 
-// Test counters
 static int tests_run = 0;
 static int tests_passed = 0;
 
-// Simple test framework
 #define TEST(name) \
     do { \
         tests_run++; \
@@ -68,7 +66,6 @@ static int tests_passed = 0;
         } \
     } while (0)
 
-// Test functions
 void test_rc_retain_null_pointer() {
     TEST(test_rc_retain_null_pointer) {
         const void* result = reference_counting_allocator_api->retain(NULL);
@@ -136,7 +133,6 @@ void test_rc_retain_after_release() {
     } END_TEST;
 }
 
-// Additional tests moved from main.c
 void test_basic_allocation() {
     TEST(test_basic_allocation) {
         const_ptr_reference_counting_allocator_t const_allocator_ptr = reference_counting_allocator_api->init();
@@ -145,8 +141,6 @@ void test_basic_allocation() {
         if (str) {
             const char *data = "Hello, world!";
             strcpy_s((char*)(str->ptr), 20, data);
-            // We can't easily assert string equality without a proper ASSERT_STR_EQ macro
-            // For now, we'll just check that the pointer is not null
             ASSERT_PTR_NOT_NULL(str->ptr);
         }
     } END_TEST;
@@ -159,7 +153,6 @@ void test_retain_increment_reference_count() {
         ASSERT_PTR_NOT_NULL(str);
         char* str2 = reference_counting_allocator_api->retain(str);
         ASSERT_PTR_NOT_NULL(str2);
-        // Note: We can't directly check ref count without accessing internal structure
     } END_TEST;
 }
 
@@ -171,7 +164,6 @@ void test_release_one_reference() {
         char* str2 = reference_counting_allocator_api->retain(str);
         ASSERT_PTR_NOT_NULL(str2);
         reference_counting_allocator_api->free(const_allocator_ptr, str);
-        // This test just verifies no crash occurs
     } END_TEST;
 }
 
@@ -185,7 +177,6 @@ void test_allocate_more_memory() {
             for (int i = 0; i < 5; i++) {
                 numbers_ptr[i] = i * 10;
             }
-            // Verify values
             for (int i = 0; i < 5; i++) {
                 ASSERT_EQ(i * 10, numbers_ptr[i]);
             }
@@ -204,7 +195,6 @@ void test_retain_array() {
         }
         int* numbers2 = reference_counting_allocator_api->retain(numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
-        // Verify values are accessible through retained pointer
         for (int i = 0; i < 5; i++) {
             ASSERT_EQ(i * 10, numbers2[i]);
         }
@@ -220,7 +210,6 @@ void test_release_all_references_to_string() {
         ASSERT_PTR_NOT_NULL(str2);
         reference_counting_allocator_api->free(const_allocator_ptr, str);
         reference_counting_allocator_api->free(const_allocator_ptr, str);
-        // This test just verifies no crash occurs
     } END_TEST;
 }
 
@@ -232,7 +221,6 @@ void test_release_one_reference_to_array() {
         int* numbers2 = reference_counting_allocator_api->retain(numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
         reference_counting_allocator_api->free(const_allocator_ptr, numbers);
-        // This test just verifies no crash occurs
     } END_TEST;
 }
 
@@ -245,7 +233,6 @@ void test_release_final_reference_to_array() {
         ASSERT_PTR_NOT_NULL(numbers2);
         reference_counting_allocator_api->free(const_allocator_ptr, numbers);
         reference_counting_allocator_api->free(const_allocator_ptr, numbers);
-        // This test just verifies no crash occurs
     } END_TEST;
 }
 
@@ -256,11 +243,9 @@ void test_release_already_freed_memory() {
         ASSERT_PTR_NOT_NULL(str);
         reference_counting_allocator_api->free(const_allocator_ptr, str);
         reference_counting_allocator_api->free(const_allocator_ptr, str);
-        // This test just verifies no crash occurs
     } END_TEST;
 }
 
-// Test runner
 int main() {
     printf("Running unit tests for rc_retain function\n");
     printf("==========================================\n\n");
@@ -271,7 +256,6 @@ int main() {
     test_rc_retain_multiple_retains();
     test_rc_retain_after_release();
     
-    // Additional tests moved from main.c
     test_basic_allocation();
     test_retain_increment_reference_count();
     test_release_one_reference();

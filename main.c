@@ -7,10 +7,8 @@ int main(void) {
     printf("Reference Counting Memory Allocator Demo\n");
     printf("========================================\n\n");
     
-    // Create and initialize allocator state
     const_ptr_reference_counting_allocator_t const_allocator_ptr = reference_counting_allocator_api->init();
     
-    // Basic allocation example
     printf("Allocating memory for a string...\n");
     const_ptr_smart_pointer_t str = reference_counting_allocator_api->alloc(const_allocator_ptr, 20);
     if (str) {
@@ -22,7 +20,6 @@ int main(void) {
 #if DEBUG
     reference_counting_allocator_api->print_statistics(const_allocator_ptr);
 #endif    
-    // Retain example
     printf("\nRetaining the string...\n");
     char* str2 = reference_counting_allocator_api->retain(str);
     if (str2) {
@@ -32,7 +29,6 @@ int main(void) {
     reference_counting_allocator_api->print_statistics(const_allocator_ptr);
 #endif    
     
-    // Release examples
     printf("\nReleasing one reference...\n");
     
     reference_counting_allocator_api->free(const_allocator_ptr, str);
@@ -46,18 +42,15 @@ int main(void) {
     reference_counting_allocator_api->print_statistics(const_allocator_ptr);
 #endif    
     
-    // Array allocation example
     printf("\nAllocating memory for an array...\n");
     const_ptr_smart_pointer_t numbers = reference_counting_allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
     if (numbers) {
         int* numbers_ptr = (int*)reference_counting_allocator_api->retain(numbers);
         
-        // Initialize array
         for (int i = 0; i < 5; i++) {
             numbers_ptr[i] = i * 10;
         }
         
-        // Print array
         printf("Allocated array: ");
         for (int i = 0; i < 5; i++) {
             printf("%d ", numbers_ptr[i]);
@@ -68,7 +61,6 @@ int main(void) {
     reference_counting_allocator_api->print_statistics(const_allocator_ptr);
 #endif    
     
-    // Clean up array
     printf("\nReleasing array...\n");
     reference_counting_allocator_api->free(const_allocator_ptr, numbers);
 #if DEBUG
