@@ -17,12 +17,12 @@ rule link
 
 # Build statements for object files
 build main.o: cc main.c
-build func.o: cc func.c
+build reference_counting_allocator.o: cc reference_counting_allocator.c
 build test.o: cc test.c
 
 # Build statement for the executable
-build main: link main.o func.o
-build test: link test.o func.o
+build main: link main.o reference_counting_allocator.o
+build test: link test.o reference_counting_allocator.o
 
 # Default target
 default main

@@ -1,103 +1,79 @@
 #include <stdio.h>
-#include <stdarg.h> // Required for va_list, va_start, va_arg, va_end
 #include <string.h>
-#include "func.h"
 
-// Print current memory status (moved from func.c)
-void rc_print_status(rc_allocator_t* allocator) {
-    printf("\n=== Memory Status ===\n");
-    
-    mem_block_t* current = allocator->block_list;
-    int count = 0;
-    
-    while (current) {
-        printf("Block %d: %p, size: %zu\n", count++, current->ptr, current->ptr->size);
-        current = current->next;
-    }
-    
-    if (count == 0) {
-        printf("No allocated blocks\n");
-    }
-    printf("Total blocks: %d\n", allocator->total_blocks);
-    printf("=====================\n\n");
-}
+#include "reference_counting_allocator_api.h"
 
 int main(void) {
-    printf("Reference Counting Memory Allocator Test\n");
+    printf("Reference Counting Memory Allocator Demo\n");
     printf("========================================\n\n");
     
     // Create and initialize allocator state
-    rc_allocator_t allocator;
-    rc_init(&allocator);
+    const_ptr_reference_counting_allocator_t const_allocator_ptr = reference_counting_allocator_api->init();
     
-    // Test 1: Basic allocation
-    printf("Test 1: Basic allocation\n");
-    smart_ptr_t* str = rc_alloc(&allocator, 20);
-    const char *data = "Hello, world!";
-    strcpy_s((char*)(str->ptr), 20, data);
-    if (str->ptr) {
-       printf("Allocated string: %s\n", (char*)str->ptr);
+    // Basic allocation example
+    printf("Allocating memory for a string...\n");
+    const_ptr_smart_pointer_t str = reference_counting_allocator_api->alloc(const_allocator_ptr, 20);
+    if (str) {
+        const char *data = "Hello, world!";
+        char *ptr = (char*)reference_counting_allocator_api->retain(str);
+        strcpy_s(ptr, 20, data);
+        printf("Allocated string: %s\n", ptr);
     }
-    rc_print_status(&allocator);
+#if DEBUG
+    reference_counting_allocator_api->print_statistics(const_allocator_ptr);
+#endif    
+    // Retain example
+    printf("\nRetaining the string...\n");
+    char* str2 = reference_counting_allocator_api->retain(str);
+    if (str2) {
+        printf("Retained string: %s\n", str2);
+    }
+#if DEBUG
+    reference_counting_allocator_api->print_statistics(const_allocator_ptr);
+#endif    
     
-    // Test 2: Retain (increment reference count)
-    printf("Test 2: Retain (increment reference count)\n");
-    char* str2 = (char*)rc_retain(str);
-    printf("Retained string: %s\n", str2);
-    rc_print_status(&allocator);
+    // Release examples
+    printf("\nReleasing one reference...\n");
     
-    // Test 3: Release one reference
-    printf("Test 3: Release one reference\n");
-    rc_release(&allocator, str);
-    rc_print_status(&allocator);
+    reference_counting_allocator_api->free(const_allocator_ptr, str);
+#if DEBUG
+    reference_counting_allocator_api->print_statistics(const_allocator_ptr);
+#endif    
     
-    // Test 4: Allocate more memory
-    printf("Test 4: Allocate more memory\n");
-    smart_ptr_t* numbers = rc_alloc(&allocator, sizeof(int) * 5);
+    printf("\nReleasing final reference...\n");
+    reference_counting_allocator_api->free(const_allocator_ptr, str);
+#if DEBUG
+    reference_counting_allocator_api->print_statistics(const_allocator_ptr);
+#endif    
+    
+    // Array allocation example
+    printf("\nAllocating memory for an array...\n");
+    const_ptr_smart_pointer_t numbers = reference_counting_allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
     if (numbers) {
-        int* numbers_ptr = numbers->ptr;
+        int* numbers_ptr = (int*)reference_counting_allocator_api->retain(numbers);
         
+        // Initialize array
         for (int i = 0; i < 5; i++) {
             numbers_ptr[i] = i * 10;
         }
+        
+        // Print array
         printf("Allocated array: ");
         for (int i = 0; i < 5; i++) {
             printf("%d ", numbers_ptr[i]);
         }
         printf("\n");
     }
-    rc_print_status(&allocator);
+#if DEBUG
+    reference_counting_allocator_api->print_statistics(const_allocator_ptr);
+#endif    
     
-    // Test 5: Retain the array
-    printf("Test 5: Retain the array\n");
-    int* numbers2 = rc_retain(numbers);
-    printf("Retained array: ");
-    for (int i = 0; i < 5; i++) {
-        printf("%d ", numbers2[i]);
-    }
-    printf("\n");
-    rc_print_status(&allocator);
-    
-    // Test 6: Release all references to string
-    printf("Test 6: Release all references to string\n");
-    rc_release(&allocator, str);
-    rc_print_status(&allocator);
-    
-    // Test 7: Release one reference to array
-    printf("Test 7: Release one reference to array\n");
-    rc_release(&allocator, numbers);
-    rc_print_status(&allocator);
-    
-    // Test 8: Release final reference to array
-    printf("Test 8: Release final reference to array\n");
-    rc_release(&allocator, numbers);
-    rc_print_status(&allocator);
-    
-    // Test 9: Try to release already freed memory (should show warning)
-    printf("Test 9: Try to release already freed memory\n");
-    rc_release(&allocator, str);
-    rc_print_status(&allocator);
-    
-    printf("All tests completed!\n");
+    // Clean up array
+    printf("\nReleasing array...\n");
+    reference_counting_allocator_api->free(const_allocator_ptr, numbers);
+#if DEBUG
+    reference_counting_allocator_api->print_statistics(const_allocator_ptr);
+#endif
+    printf("\nDemo completed!\n");
     return 0;
 }
