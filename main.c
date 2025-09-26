@@ -63,6 +63,9 @@ int main(void) {
     
     printf("\nReleasing array...\n");
     reference_counting_allocator_api->free(const_allocator_ptr, numbers);
+
+    reference_counting_allocator_api->gc(const_allocator_ptr);
+
 #if DEBUG
     reference_counting_allocator_api->print_statistics(const_allocator_ptr);
 #endif

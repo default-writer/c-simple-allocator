@@ -9,6 +9,7 @@ static const_ptr_reference_counting_allocator_t rc_init(void);
 static const_ptr_smart_pointer_t rc_alloc(const_ptr_reference_counting_allocator_t allocator, size_t size);
 static void* rc_retain(const_ptr_smart_pointer_t ptr);
 static void rc_free(const_ptr_reference_counting_allocator_t allocator, const_ptr_smart_pointer_t ptr);
+static void rc_gc(const_ptr_reference_counting_allocator_t allocator);
 
 #if DEBUG
 static void rc_print_statistics(const_ptr_reference_counting_allocator_t const_allocator);
@@ -19,6 +20,7 @@ static reference_counting_allocator_api_t reference_counting_allocator = {
     .alloc = rc_alloc,
     .retain = rc_retain,
     .free = rc_free,
+    .gc = rc_gc,
 #if DEBUG
     .print_statistics = rc_print_statistics
 #endif
@@ -96,6 +98,18 @@ void rc_free(const_ptr_reference_counting_allocator_t const_allocator_ptr, const
         free(ptr->ptr);
         free(ptr->block);
         free(ptr);
+    }
+}
+void rc_gc(const_ptr_reference_counting_allocator_t const_allocator_ptr) {
+    mem_block_t* current = (mem_block_t*)const_allocator_ptr->block_list;
+    mem_block_t* previous = NULL;
+    while (current) {
+        previous = (mem_block_t*)current->next;
+        smart_pointer_t* ptr = (smart_pointer_t*)current->ptr;
+        free(ptr->ptr);
+        free(ptr->block);
+        free(ptr);
+        current = (mem_block_t*)previous;
     }
 }
 

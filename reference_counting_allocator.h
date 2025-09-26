@@ -11,8 +11,8 @@ typedef struct mem_block {
 } mem_block_t;
 
 typedef struct smart_pointer {
-    unsigned char ref_count;
-    unsigned char type;
+    unsigned long ref_count;
+    unsigned long type;
     size_t size;
     void* ptr;
     mem_block_t* block;

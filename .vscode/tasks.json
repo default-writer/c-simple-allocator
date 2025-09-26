@@ -32,7 +32,6 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "-t",
                     "clean"
                 ]
             },
@@ -41,7 +40,6 @@
                 "args": [
                     "-f",
                     "build.linux.ninja",
-                    "-t",
                     "clean",
                 ]
             }

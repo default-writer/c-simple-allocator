@@ -26,3 +26,11 @@ build test.exe: link test.obj reference_counting_allocator.obj
 
 # Default target
 default main.exe
+
+# Clean rule
+rule clean
+  command = cmd /c "del *.obj *.pdb main.exe test.exe 2>nul || exit 0"
+  description = Cleaning object and pdb files
+  generator = 1
+
+build clean: clean

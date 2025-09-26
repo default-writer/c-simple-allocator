@@ -26,3 +26,11 @@ build test: link test.o reference_counting_allocator.o
 
 # Default target
 default main
+
+# Clean rule
+rule clean
+  command = rm -f *.o main test 2>/dev/null || exit 0
+  description = Cleaning object files
+  generator = 1
+
+build clean: clean
