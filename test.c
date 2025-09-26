@@ -71,7 +71,7 @@ void test_rc_retain_null_pointer() {
         rc_allocator_t allocator;
         rc_init(&allocator);
         
-        void* result = rc_retain(&allocator, NULL);
+        void* result = rc_retain(NULL);
         
         ASSERT_PTR_NULL(result);
     } END_TEST;
@@ -83,22 +83,22 @@ void test_rc_retain_valid_pointer_in_allocator() {
         rc_init(&allocator);
         
         // Allocate a block of memory
-        void* ptr = rc_alloc(&allocator, 10);
+        smart_ptr_t* ptr = rc_alloc(&allocator, 10);
         ASSERT_PTR_NOT_NULL(ptr);
         
         // Check initial ref_count
         mem_block_t* block = allocator.block_list;
         ASSERT_PTR_NOT_NULL(block);
-        ASSERT_EQ(1, block->ref_count);
+        ASSERT_EQ(1, block->ptr->ref_count);
         
         // Retain the pointer
-        void* result = rc_retain(&allocator, ptr);
+        void* result = rc_retain(ptr);
         
         // Check that the same pointer is returned
-        ASSERT_PTR_EQ(ptr, result);
+        ASSERT_PTR_EQ(ptr->ptr, result);
         
         // Check that ref_count was incremented
-        ASSERT_EQ(2, block->ref_count);
+        ASSERT_EQ(2, block->ptr->ref_count);
     } END_TEST;
 }
 
@@ -109,10 +109,10 @@ void test_rc_retain_valid_pointer_not_in_allocator() {
         
         // Create a pointer that is not in our allocator
         int dummy_value = 42;
-        void* ptr = &dummy_value;
+        smart_ptr_t* ptr = (smart_ptr_t*)&dummy_value;
         
         // Try to retain this pointer
-        void* result = rc_retain(&allocator, ptr);
+        void* result = rc_retain(ptr);
         
         // Should return NULL since the pointer is not in our allocator
         ASSERT_PTR_NULL(result);
@@ -125,26 +125,26 @@ void test_rc_retain_multiple_retains() {
         rc_init(&allocator);
         
         // Allocate a block of memory
-        void* ptr = rc_alloc(&allocator, 10);
+        smart_ptr_t* ptr = rc_alloc(&allocator, 10);
         ASSERT_PTR_NOT_NULL(ptr);
         
         // Check initial ref_count
         mem_block_t* block = allocator.block_list;
         ASSERT_PTR_NOT_NULL(block);
-        ASSERT_EQ(1, block->ref_count);
+        ASSERT_EQ(1, block->ptr->ref_count);
         
         // Retain the pointer multiple times
-        void* result1 = rc_retain(&allocator, ptr);
-        void* result2 = rc_retain(&allocator, ptr);
-        void* result3 = rc_retain(&allocator, ptr);
+        void* result1 = rc_retain(ptr);
+        void* result2 = rc_retain(ptr);
+        void* result3 = rc_retain(ptr);
         
         // Check that the same pointer is returned each time
-        ASSERT_PTR_EQ(ptr, result1);
-        ASSERT_PTR_EQ(ptr, result2);
-        ASSERT_PTR_EQ(ptr, result3);
+        ASSERT_PTR_EQ(ptr->ptr, result1);
+        ASSERT_PTR_EQ(ptr->ptr, result2);
+        ASSERT_PTR_EQ(ptr->ptr, result3);
         
         // Check that ref_count was incremented correctly
-        ASSERT_EQ(4, block->ref_count);
+        ASSERT_EQ(4, block->ptr->ref_count);
     } END_TEST;
 }
 
@@ -154,29 +154,29 @@ void test_rc_retain_after_release() {
         rc_init(&allocator);
         
         // Allocate a block of memory
-        void* ptr = rc_alloc(&allocator, 10);
+        smart_ptr_t* ptr = rc_alloc(&allocator, 10);
         ASSERT_PTR_NOT_NULL(ptr);
         
         // Retain the pointer
-        void* result1 = rc_retain(&allocator, ptr);
-        ASSERT_PTR_EQ(ptr, result1);
+        void* result1 = rc_retain(ptr);
+        ASSERT_PTR_EQ(ptr->ptr, result1);
         
         // Check ref_count
         mem_block_t* block = allocator.block_list;
-        ASSERT_EQ(2, block->ref_count);
+        ASSERT_EQ(2, block->ptr->ref_count);
         
         // Release one reference
         rc_release(&allocator, ptr);
         
         // Check ref_count
-        ASSERT_EQ(1, block->ref_count);
+        ASSERT_EQ(1, block->ptr->ref_count);
         
         // Retain again
-        void* result2 = rc_retain(&allocator, ptr);
-        ASSERT_PTR_EQ(ptr, result2);
+        void* result2 = rc_retain(ptr);
+        ASSERT_PTR_EQ(ptr->ptr, result2);
         
         // Check ref_count
-        ASSERT_EQ(2, block->ref_count);
+        ASSERT_EQ(2, block->ptr->ref_count);
     } END_TEST;
 }
 

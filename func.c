@@ -10,6 +10,7 @@
 #define DEBUG_PRINT(...)
 #endif
 
+
 // Initialize the allocator state
 void rc_init(rc_allocator_t* allocator) {
     allocator->block_list = NULL;
@@ -17,7 +18,7 @@ void rc_init(rc_allocator_t* allocator) {
 }
 
 // Allocate memory with reference counting
-void* rc_alloc(rc_allocator_t* allocator, size_t size) {
+smart_ptr_t* rc_alloc(rc_allocator_t* allocator, size_t size) {
     // Allocate the actual memory
     void* ptr = malloc(size);
     if (!ptr) {
@@ -31,72 +32,74 @@ void* rc_alloc(rc_allocator_t* allocator, size_t size) {
         return NULL;
     }
     
-    // Initialize the block
-    block->ptr = ptr;
-    block->size = size;
-    block->ref_count = 1;
+    // Create a new smart pointer
+    smart_ptr_t* smart_ptr = malloc(sizeof(smart_ptr_t));
+    if (!smart_ptr) {
+        free(ptr);
+        free(block);
+        return NULL;
+    }
+
+    // Initialize the smart pointer
+    smart_ptr->ref_count = 1;
+    smart_ptr->type = SMART_PTR_TYPE;
+    smart_ptr->size = size;
+    smart_ptr->ptr = ptr;
+    smart_ptr->block = block;
     
+    // Initialize the block
+    block->ptr = smart_ptr;
     // Add to the allocator's list
     block->next = allocator->block_list;
     allocator->block_list = block;
     allocator->total_blocks++;
     
-    DEBUG_PRINT("Allocated %zu bytes at %p, ref_count: %d\n", size, ptr, block->ref_count);
-    return ptr;
+    DEBUG_PRINT("Allocated %zu bytes at %p, ref_count: %d\n", size, ptr, smart_ptr->ref_count);
+
+    return smart_ptr;
 }
 
 // Increment reference count
-void* rc_retain(rc_allocator_t* allocator, void* ptr) {
-    if (!ptr) return NULL;
-    
-    // Find the block in our list
-    mem_block_t* current = allocator->block_list;
-    while (current) {
-        if (current->ptr == ptr) {
-            current->ref_count++;
-            DEBUG_PRINT("Retained pointer %p, ref_count: %d\n", ptr, current->ref_count);
-            return ptr;
-        }
-        current = current->next;
-    }
-    
-    // Pointer not found in our allocated blocks
-    return NULL;
+void* rc_retain(smart_ptr_t* ptr) {
+    if (!ptr || ptr->type != SMART_PTR_TYPE) return NULL;
+    ptr->ref_count++;
+    return ptr->ptr;
 }
 
 // Decrement reference count and free if needed
-void rc_release(rc_allocator_t* allocator, void* ptr) {
+void rc_release(rc_allocator_t* allocator, smart_ptr_t* ptr) {
     if (!ptr) return;
+
+    ptr->ref_count--;
+    DEBUG_PRINT("Released pointer %p, ref_count: %u\n", ptr, ptr->ref_count);
     
-    mem_block_t* current = allocator->block_list;
-    mem_block_t* prev = NULL;
-    
-    // Find the block in our list
-    while (current) {
-        if (current->ptr == ptr) {
-            current->ref_count--;
-            DEBUG_PRINT("Released pointer %p, ref_count: %d\n", ptr, current->ref_count);
-            
-            // If reference count reaches zero, free the memory
-            if (current->ref_count <= 0) {
-                DEBUG_PRINT("Freeing %zu bytes at %p\n", current->size, ptr);
-                free(ptr);
-                
-                // Remove from the list
-                if (prev) {
-                    prev->next = current->next;
+    // If reference count reaches zero, free the memory and remove from list
+    if (ptr->ref_count <= 0) {
+        DEBUG_PRINT("Freeing %zu bytes at %p\n", ptr->block->size, ptr->ptr);
+        
+        // Remove block from allocator's block list
+        mem_block_t* current = allocator->block_list;
+        mem_block_t* previous = NULL;
+        
+        while (current) {
+            if (current->ptr == ptr) {
+                // Found the block to remove
+                if (previous) {
+                    previous->next = current->next;
                 } else {
+                    // Removing the first block
                     allocator->block_list = current->next;
                 }
-                free(current);
                 allocator->total_blocks--;
+                break;
             }
-            return;
+            previous = current;
+            current = current->next;
         }
-        prev = current;
-        current = current->next;
+        
+        // Free the memory
+        free(ptr->ptr);
+        free(ptr->block);
+        free(ptr);
     }
-    
-    // Pointer not found in our allocated blocks
-    DEBUG_PRINT("Warning: Attempted to release untracked pointer %p\n", ptr);
 }

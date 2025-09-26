@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h> // Required for va_list, va_start, va_arg, va_end
+#include <string.h>
 #include "func.h"
-
 
 // Print current memory status (moved from func.c)
 void rc_print_status(rc_allocator_t* allocator) {
@@ -11,8 +11,7 @@ void rc_print_status(rc_allocator_t* allocator) {
     int count = 0;
     
     while (current) {
-        printf("Block %d: %p, size: %zu, ref_count: %d\n", 
-               count++, current->ptr, current->size, current->ref_count);
+        printf("Block %d: %p, size: %zu\n", count++, current->ptr, current->ptr->size);
         current = current->next;
     }
     
@@ -33,15 +32,17 @@ int main(void) {
     
     // Test 1: Basic allocation
     printf("Test 1: Basic allocation\n");
-    char* str = (char*)rc_alloc(&allocator, 20);
-    if (str) {
-        printf("Allocated string: %s\n", str);
+    smart_ptr_t* str = rc_alloc(&allocator, 20);
+    const char *data = "Hello, world!";
+    strcpy_s((char*)(str->ptr), 20, data);
+    if (str->ptr) {
+       printf("Allocated string: %s\n", (char*)str->ptr);
     }
     rc_print_status(&allocator);
     
     // Test 2: Retain (increment reference count)
     printf("Test 2: Retain (increment reference count)\n");
-    char* str2 = (char*)rc_retain(&allocator, str);
+    char* str2 = (char*)rc_retain(str);
     printf("Retained string: %s\n", str2);
     rc_print_status(&allocator);
     
@@ -52,14 +53,16 @@ int main(void) {
     
     // Test 4: Allocate more memory
     printf("Test 4: Allocate more memory\n");
-    int* numbers = (int*)rc_alloc(&allocator, sizeof(int) * 5);
+    smart_ptr_t* numbers = rc_alloc(&allocator, sizeof(int) * 5);
     if (numbers) {
+        int* numbers_ptr = numbers->ptr;
+        
         for (int i = 0; i < 5; i++) {
-            numbers[i] = i * 10;
+            numbers_ptr[i] = i * 10;
         }
         printf("Allocated array: ");
         for (int i = 0; i < 5; i++) {
-            printf("%d ", numbers[i]);
+            printf("%d ", numbers_ptr[i]);
         }
         printf("\n");
     }
@@ -67,7 +70,7 @@ int main(void) {
     
     // Test 5: Retain the array
     printf("Test 5: Retain the array\n");
-    int* numbers2 = (int*)rc_retain(&allocator, numbers);
+    int* numbers2 = rc_retain(numbers);
     printf("Retained array: ");
     for (int i = 0; i < 5; i++) {
         printf("%d ", numbers2[i]);
@@ -77,7 +80,7 @@ int main(void) {
     
     // Test 6: Release all references to string
     printf("Test 6: Release all references to string\n");
-    rc_release(&allocator, str2);
+    rc_release(&allocator, str);
     rc_print_status(&allocator);
     
     // Test 7: Release one reference to array
@@ -87,7 +90,7 @@ int main(void) {
     
     // Test 8: Release final reference to array
     printf("Test 8: Release final reference to array\n");
-    rc_release(&allocator, numbers2);
+    rc_release(&allocator, numbers);
     rc_print_status(&allocator);
     
     // Test 9: Try to release already freed memory (should show warning)

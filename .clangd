@@ -7,8 +7,6 @@ Diagnostics:
     Add:
       - readability-function-cognitive-complexity
       - performance-unnecessary-value-param
-    Remove:
-      - clang-diagnostic-unused-parameter
 
 InlayHints:
   Designators: false

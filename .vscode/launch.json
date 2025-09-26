@@ -2,6 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "program": "",
             "name": "debug",
             "type": "lldb-dap",
             "request": "launch",
@@ -13,6 +14,21 @@
             "linux": {
                 "program": "${workspaceFolder}/main"
             }
+        },
+        {
+            "program": "",
+            "name": "test",
+            "type": "lldb-dap",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "program": "${workspaceFolder}/test.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/test"
+            }
         }
+
     ]
 }
