@@ -1,35 +1,35 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "reference_counting_allocator_api.h"
+#include "src/api/alloc.h"
 
 int main(void) {
-    allocator_ptr_t const_allocator_ptr = allocator_api->init();
+    allocator_ptr_t const_allocator_ptr = alloc->init();
     
     printf("Allocating memory for a string...\n");
-    sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+    sp_ptr_t str = alloc->alloc(const_allocator_ptr, 20);
     if (str) {
         const char *data = "Hello, world!";
-        char *ptr = (char*)allocator_api->retain(str);
+        char *ptr = (char*)alloc->retain(str);
         strcpy_s(ptr, 20, data);
         printf("Allocated string: %s\n", ptr);
     }
 
     printf("\nRetaining the string...\n");
-    char* str2 = allocator_api->retain(str);
+    char* str2 = alloc->retain(str);
     if (str2) {
         printf("Retained string: %s\n", str2);
     }
     printf("\nReleasing one reference...\n");
-    allocator_api->release(str);
+    alloc->release(str);
     
     printf("\nReleasing final reference...\n");
-    allocator_api->release(str);
+    alloc->release(str);
     
     printf("\nAllocating memory for an array...\n");
-    sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+    sp_ptr_t numbers = alloc->alloc(const_allocator_ptr, sizeof(int) * 5);
     if (numbers) {
-        int* numbers_ptr = (int*)allocator_api->retain(numbers);
+        int* numbers_ptr = (int*)alloc->retain(numbers);
         for (int i = 0; i < 5; i++) {
             numbers_ptr[i] = i * 10;
         }
@@ -41,9 +41,9 @@ int main(void) {
     }
     
     printf("\nReleasing array...\n");
-    allocator_api->release(numbers);
-    allocator_api->gc(const_allocator_ptr);
-    allocator_api->destroy(&const_allocator_ptr);
+    alloc->release(numbers);
+    alloc->gc(const_allocator_ptr);
+    alloc->destroy(&const_allocator_ptr);
 
     printf("\nDemo completed!\n");
     return 0;

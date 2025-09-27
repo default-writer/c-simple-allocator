@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "reference_counting_allocator_api.h"
-#include "reference_counting_allocator.h"
+#include "../api/alloc.h"
+#include "alloc.h"
 
 static allocator_ptr_t rc_init(void);
 static sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size);
@@ -12,7 +12,7 @@ static void rc_release(sp_ptr_t sp);
 static void rc_gc(allocator_ptr_t const_allocator_ptr);
 static void rc_destroy(const allocator_ptr_t* const_allocator_ptr);
 
-static allocator_api_t reference_counting_allocator = {
+static alloc_t reference_counting_allocator = {
     .init = rc_init,
     .alloc = rc_alloc,
     .retain = rc_retain,
@@ -21,7 +21,7 @@ static allocator_api_t reference_counting_allocator = {
     .destroy = rc_destroy
 };
 
-allocator_api_ptr_t allocator_api = &reference_counting_allocator;
+alloc_ptr_t alloc = &reference_counting_allocator;
 
 allocator_ptr_t rc_init(void) {
     allocator_t* allocator = malloc(sizeof(allocator_t));
