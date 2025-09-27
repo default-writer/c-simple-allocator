@@ -6,9 +6,9 @@
 #include "reference_counting_allocator.h"
 
 static allocator_ptr_t rc_init(void);
-static const_sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size);
-static void* rc_retain(const_sp_ptr_t ptr);
-static void rc_release(const_sp_ptr_t const_smart_ptr);
+static sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size);
+static void* rc_retain(sp_ptr_t ptr);
+static void rc_release(sp_ptr_t sp);
 static void rc_gc(allocator_ptr_t const_allocator_ptr);
 static void rc_destroy(const allocator_ptr_t* const_allocator_ptr);
 
@@ -31,7 +31,7 @@ allocator_ptr_t rc_init(void) {
     return allocator;
 }
 
-const_sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size) {
+sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size) {
     void* ptr = malloc(size);
     if (!ptr) {
         return NULL;
@@ -70,16 +70,16 @@ const_sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size) {
     return smart_pointer;
 }
 
-void* rc_retain(const_sp_ptr_t const_smart_ptr) {
-    if (!const_smart_ptr) return NULL;
-    struct sp* ptr = (struct sp*)const_smart_ptr;
+void* rc_retain(sp_ptr_t sp) {
+    if (!sp || sp->type != SMART_PTR_TYPE) return NULL;
+    struct sp* ptr = (struct sp*)sp;
     ptr->ref_count++;
     return ptr->ptr;
 }
 
-void rc_release(const_sp_ptr_t const_smart_ptr) {
-    if (!const_smart_ptr) return;
-    struct sp* ptr = (struct sp*)const_smart_ptr;
+void rc_release(sp_ptr_t sp) {
+    if (!sp || sp->type != SMART_PTR_TYPE) return;
+    struct sp* ptr = (struct sp*)sp;
     ptr->ref_count--;
     if (ptr->ref_count <= 0) {
         allocator_t* allocator = (allocator_t*)ptr->allocator;

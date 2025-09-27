@@ -82,7 +82,7 @@ void test_rc_retain_null_pointer() {
 void test_rc_retain_valid_pointer_in_allocator() {
     TEST(test_rc_retain_valid_pointer_in_allocator) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t ptr = allocator_api->alloc(const_allocator_ptr, 10);
+        sp_ptr_t ptr = allocator_api->alloc(const_allocator_ptr, 10);
         ASSERT_PTR_NOT_NULL(ptr);
 
         mem_block_t* block = (mem_block_t*)const_allocator_ptr->block_list;
@@ -125,7 +125,7 @@ void test_rc_retain_valid_pointer_not_in_allocator() {
 void test_rc_retain_multiple_retains() {
     TEST(test_rc_retain_multiple_retains) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t ptr = allocator_api->alloc(const_allocator_ptr, 10);
+        sp_ptr_t ptr = allocator_api->alloc(const_allocator_ptr, 10);
         ASSERT_PTR_NOT_NULL(ptr);
 
         mem_block_t* block = (mem_block_t*)const_allocator_ptr->block_list;
@@ -153,7 +153,7 @@ void test_rc_retain_multiple_retains() {
 void test_rc_retain_after_release() {
     TEST(test_rc_retain_after_release) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t ptr = allocator_api->alloc(const_allocator_ptr, 10);
+        sp_ptr_t ptr = allocator_api->alloc(const_allocator_ptr, 10);
         ASSERT_PTR_NOT_NULL(ptr);
 
         const void* result1 = allocator_api->retain(ptr);
@@ -182,7 +182,7 @@ void test_rc_retain_after_release() {
 void test_basic_allocation() {
     TEST(test_basic_allocation) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
         if (str) {
@@ -203,7 +203,7 @@ void test_basic_allocation() {
 void test_retain_increment_reference_count() {
     TEST(test_retain_increment_reference_count) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
         char* str2 = allocator_api->retain(str);
@@ -221,7 +221,7 @@ void test_retain_increment_reference_count() {
 void test_release_one_reference() {
     TEST(test_release_one_reference) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
         char* str2 = allocator_api->retain(str);
@@ -246,7 +246,7 @@ void test_release_one_reference() {
 void test_allocate_more_memory() {
     TEST(test_allocate_more_memory) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
         int* numbers_ptr = (int*)allocator_api->retain(numbers);
@@ -269,7 +269,7 @@ void test_allocate_more_memory() {
 void test_retain_array() {
     TEST(test_retain_array) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
         int* numbers1 = allocator_api->retain(numbers);
@@ -294,7 +294,7 @@ void test_retain_array() {
 void test_release_all_references_to_string() {
     TEST(test_release_all_references_to_string) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
         char* str2 = allocator_api->retain(str);
@@ -315,7 +315,7 @@ void test_release_all_references_to_string() {
 void test_release_one_reference_to_array() {
     TEST(test_release_one_reference_to_array) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
         int* numbers2 = allocator_api->retain(numbers);
@@ -334,7 +334,7 @@ void test_release_one_reference_to_array() {
 void test_release_final_reference_to_array() {
     TEST(test_release_final_reference_to_array) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
         int* numbers2 = allocator_api->retain(numbers);
@@ -360,7 +360,7 @@ void test_release_final_reference_to_array() {
 void test_release_already_freed_memory() {
     TEST(test_release_already_freed_memory) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
         allocator_api->release(str);
@@ -395,7 +395,7 @@ void test_rc_gc_no_blocks() {
 void test_rc_gc_single_block() {
     TEST(test_rc_gc_single_block) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
         allocator_api->gc(const_allocator_ptr);
@@ -415,9 +415,9 @@ void test_rc_gc_single_block() {
 void test_rc_gc_free_block_1_of_3() {
     TEST(test_rc_gc_free_block_1_of_3) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
-        const_sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
 
         ASSERT_PTR_NOT_NULL(str1);
         ASSERT_PTR_NOT_NULL(str2);
@@ -448,9 +448,9 @@ void test_rc_gc_free_block_1_of_3() {
 void test_rc_gc_free_block_2_of_3() {
     TEST(test_rc_gc_free_block_2_of_3) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
-        const_sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
 
         ASSERT_PTR_NOT_NULL(str1);
         ASSERT_PTR_NOT_NULL(str2);
@@ -482,9 +482,9 @@ void test_rc_gc_free_block_2_of_3() {
 void test_rc_gc_free_block_3_of_3() {
     TEST(test_rc_gc_free_block_3_of_3) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
-        const_sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
 
         ASSERT_PTR_NOT_NULL(str1);
         ASSERT_PTR_NOT_NULL(str2);
@@ -515,7 +515,7 @@ void test_rc_gc_free_block_3_of_3() {
 void test_rc_gc_memory_cleanup() {
     TEST(test_rc_gc_memory_cleanup) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
         allocator_t* allocator = (allocator_t*)const_allocator_ptr;
@@ -534,9 +534,9 @@ void test_rc_gc_memory_cleanup() {
 void test_rc_gc_free_one_block() {
     TEST(test_rc_gc_multiple_blocks) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
-        const_sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
-        const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+        sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
+        sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(str1);
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
@@ -563,9 +563,9 @@ void test_rc_gc_free_one_block() {
 void test_double_linked_list_functionality() {
     TEST(test_double_linked_list_functionality) {
         allocator_ptr_t const_allocator_ptr = allocator_api->init();
-        const_sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
-        const_sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
-        const_sp_ptr_t str3 = allocator_api->alloc(const_allocator_ptr, 40);
+        sp_ptr_t str1 = allocator_api->alloc(const_allocator_ptr, 20);
+        sp_ptr_t str2 = allocator_api->alloc(const_allocator_ptr, 30);
+        sp_ptr_t str3 = allocator_api->alloc(const_allocator_ptr, 40);
         ASSERT_PTR_NOT_NULL(str1);
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(str3);

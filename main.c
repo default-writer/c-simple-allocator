@@ -7,7 +7,7 @@ int main(void) {
     allocator_ptr_t const_allocator_ptr = allocator_api->init();
     
     printf("Allocating memory for a string...\n");
-    const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
+    sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
     if (str) {
         const char *data = "Hello, world!";
         char *ptr = (char*)allocator_api->retain(str);
@@ -27,7 +27,7 @@ int main(void) {
     allocator_api->release(str);
     
     printf("\nAllocating memory for an array...\n");
-    const_sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
+    sp_ptr_t numbers = allocator_api->alloc(const_allocator_ptr, sizeof(int) * 5);
     if (numbers) {
         int* numbers_ptr = (int*)allocator_api->retain(numbers);
         for (int i = 0; i < 5; i++) {
