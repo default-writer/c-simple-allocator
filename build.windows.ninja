@@ -12,7 +12,7 @@ rule cc
 
 # Rule for linking .obj files to .exe
 rule link
-  command = lld-link $ldflags /OUT:$out $in
+  command = lld-link $ldflags /OUT:$out.exe $in
   description = Linking $out
 
 # Build statements for object files
@@ -21,16 +21,16 @@ build reference_counting_allocator.obj: cc reference_counting_allocator.c
 build test.obj: cc test.c
 
 # Build statement for the executable
-build main.exe: link main.obj reference_counting_allocator.obj
-build test.exe: link test.obj reference_counting_allocator.obj
+build main: link main.obj reference_counting_allocator.obj
+build test: link test.obj reference_counting_allocator.obj
 
 # Default target
-default main.exe
+default main
 
 # Clean rule
 rule clean
   command = cmd /c "del *.obj *.pdb main.exe test.exe 2>nul || exit 0"
-  description = Cleaning object and pdb files
+  description = Clean
   generator = 1
 
 build clean: clean

@@ -3,6 +3,7 @@
 **/*.obj
 **/*.pdb
 **/*.exe
-
+/main
+/test
 /.ninja_log
 

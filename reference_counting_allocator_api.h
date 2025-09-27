@@ -3,22 +3,23 @@
 
 #define SMART_PTR_TYPE 1
 
-typedef const struct smart_pointer* const_ptr_smart_pointer_t;
-typedef const struct reference_counting_allocator* const_ptr_reference_counting_allocator_t;
-typedef const struct reference_counting_allocator_api* const_ptr_reference_counting_allocator_api_t;
+typedef const struct sp* const_sp_ptr_t;
+typedef const struct allocator* allocator_ptr_t;
+typedef const struct allocator_api* allocator_api_ptr_t;
 
-typedef struct reference_counting_allocator_api
+typedef struct allocator_api
 {
-    const_ptr_reference_counting_allocator_t (*init)(void);
-    const_ptr_smart_pointer_t (*alloc)(const_ptr_reference_counting_allocator_t allocator, size_t size);
-    void* (*retain)(const_ptr_smart_pointer_t ptr);
-    void (*free)(const_ptr_reference_counting_allocator_t allocator, const_ptr_smart_pointer_t ptr);
-    void (*gc)(const_ptr_reference_counting_allocator_t allocator);
-#if DEBUG    
-    void (*print_statistics)(const_ptr_reference_counting_allocator_t const_allocator_ptr);
+    allocator_ptr_t (*init)(void);
+    const_sp_ptr_t (*alloc)(allocator_ptr_t const_allocator_ptr, size_t size);
+    void* (*retain)(const_sp_ptr_t ptr);
+    void (*free)(const_sp_ptr_t const_smart_ptr);
+    void (*gc)(allocator_ptr_t const_allocator_ptr);
+    void (*destroy)(const allocator_ptr_t* const_allocator_ptr);
+#if DEBUG
+    void (*print_statistics)(allocator_ptr_t const_allocator_ptr);
 #endif
-} reference_counting_allocator_api_t;
+} allocator_api_t;
 
-extern const_ptr_reference_counting_allocator_api_t reference_counting_allocator_api;
+extern allocator_api_ptr_t allocator_api;
 
 #endif // REFERENCE_COUNTING_ALLOCATOR_API_H

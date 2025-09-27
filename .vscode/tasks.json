@@ -12,14 +12,16 @@
                 "command": "ninja",
                 "args": [
                     "-f",
-                    "build.windows.ninja"
+                    "build.windows.ninja",
+                    "main"
                 ]
             },
             "linux": {
                 "command": "ninja",
                 "args": [
                     "-f",
-                    "build.linux.ninja"
+                    "build.linux.ninja",
+                    "main"
                 ]
             }
         },
@@ -53,7 +55,7 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "test.exe"
+                    "test"
                 ]
             },
             "linux": {

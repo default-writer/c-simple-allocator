@@ -20,14 +20,14 @@
             "name": "test",
             "type": "lldb-dap",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "test",
             "cwd": "${workspaceFolder}",
             "windows": {
                 "program": "${workspaceFolder}/test.exe"
             },
             "linux": {
                 "program": "${workspaceFolder}/test"
-            }
+            },
         }
 
     ]
