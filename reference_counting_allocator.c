@@ -74,7 +74,7 @@ const_sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size) {
     }
     allocator->block_list = block;
     allocator->total_blocks++;
-    return (const_sp_ptr_t)smart_pointer;
+    return smart_pointer;
 }
 
 void* rc_retain(const_sp_ptr_t const_allocator_ptr) {
@@ -92,7 +92,7 @@ void rc_release(const_sp_ptr_t const_smart_ptr) {
         allocator_t* allocator = (allocator_t*)ptr->allocator;
         mem_block_t* current = ptr->block;
         
-        if (current && current->ptr == (const_sp_ptr_t)ptr) {
+        if (current && current->ptr == ptr) {
             if (current->next != NULL) {
                 current->next->prev = current->prev;
             }
