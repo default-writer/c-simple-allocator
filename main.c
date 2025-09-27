@@ -4,9 +4,6 @@
 #include "reference_counting_allocator_api.h"
 
 int main(void) {
-    printf("Reference Counting Memory Allocator Demo\n");
-    printf("========================================\n\n");
-    
     allocator_ptr_t const_allocator_ptr = allocator_api->init();
     
     printf("Allocating memory for a string...\n");
@@ -31,13 +28,13 @@ int main(void) {
     
     printf("\nReleasing one reference...\n");
     
-    allocator_api->free(str);
+    allocator_api->release(str);
 #if DEBUG
     allocator_api->print_statistics(const_allocator_ptr);
 #endif    
     
     printf("\nReleasing final reference...\n");
-    allocator_api->free(str);
+    allocator_api->release(str);
 #if DEBUG
     allocator_api->print_statistics(const_allocator_ptr);
 #endif    
@@ -60,7 +57,7 @@ int main(void) {
 #endif    
     
     printf("\nReleasing array...\n");
-    allocator_api->free(numbers);
+    allocator_api->release(numbers);
     allocator_api->gc(const_allocator_ptr);
     allocator_api->destroy(&const_allocator_ptr);
 

@@ -110,7 +110,7 @@ void test_rc_retain_valid_pointer_not_in_allocator() {
         struct sp* ptr = (struct sp*)&dummy_value;
 
         const void* result = allocator_api->retain(ptr);
-        allocator_api->free(ptr);
+        allocator_api->release(ptr);
         ASSERT_PTR_NULL(result);
 
         allocator_api->gc(const_allocator_ptr);
@@ -163,7 +163,7 @@ void test_rc_retain_after_release() {
         ASSERT_PTR_NULL(block->prev);
         ASSERT_EQ(2, block->ptr->ref_count);
 
-        allocator_api->free(ptr);
+        allocator_api->release(ptr);
         ASSERT_EQ(1, block->ptr->ref_count);
 
         const void* result2 = allocator_api->retain(ptr);
@@ -227,7 +227,7 @@ void test_release_one_reference() {
         char* str2 = allocator_api->retain(str);
         ASSERT_PTR_NOT_NULL(str2);
 
-        allocator_api->free(str);
+        allocator_api->release(str);
         allocator_t* allocator = (allocator_t*)const_allocator_ptr;
         ASSERT_PTR_NOT_NULL(allocator);
         ASSERT_EQ(1, allocator->total_blocks);
@@ -300,8 +300,8 @@ void test_release_all_references_to_string() {
         char* str2 = allocator_api->retain(str);
         ASSERT_PTR_NOT_NULL(str2);
 
-        allocator_api->free(str);
-        allocator_api->free(str);
+        allocator_api->release(str);
+        allocator_api->release(str);
 
         allocator_api->gc(const_allocator_ptr);
         ASSERT_PTR_NOT_NULL(const_allocator_ptr);
@@ -320,7 +320,7 @@ void test_release_one_reference_to_array() {
 
         int* numbers2 = allocator_api->retain(numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
-        allocator_api->free(numbers);
+        allocator_api->release(numbers);
 
         allocator_api->gc(const_allocator_ptr);
         ASSERT_PTR_NOT_NULL(const_allocator_ptr);
@@ -340,8 +340,8 @@ void test_release_final_reference_to_array() {
         int* numbers2 = allocator_api->retain(numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
 
-        allocator_api->free(numbers);
-        allocator_api->free(numbers);
+        allocator_api->release(numbers);
+        allocator_api->release(numbers);
 
         allocator_t* allocator = (allocator_t*)const_allocator_ptr;
         ASSERT_PTR_NOT_NULL(allocator);
@@ -363,8 +363,8 @@ void test_release_already_freed_memory() {
         const_sp_ptr_t str = allocator_api->alloc(const_allocator_ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
-        allocator_api->free(str);
-        allocator_api->free(str);
+        allocator_api->release(str);
+        allocator_api->release(str);
 
         allocator_api->gc(const_allocator_ptr);
         ASSERT_PTR_NOT_NULL(const_allocator_ptr);
@@ -423,7 +423,7 @@ void test_rc_gc_free_block_1_of_3() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        allocator_api->free(str1);
+        allocator_api->release(str1);
         ASSERT_EQ(2, const_allocator_ptr->total_blocks);
         ASSERT(const_allocator_ptr->block_list != NULL);
 
@@ -456,7 +456,7 @@ void test_rc_gc_free_block_2_of_3() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        allocator_api->free(str2);
+        allocator_api->release(str2);
         ASSERT_EQ(2, const_allocator_ptr->total_blocks);
         ASSERT(const_allocator_ptr->block_list != NULL);
 
@@ -490,7 +490,7 @@ void test_rc_gc_free_block_3_of_3() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        allocator_api->free(numbers);
+        allocator_api->release(numbers);
         ASSERT_EQ(2, const_allocator_ptr->total_blocks);
         ASSERT(const_allocator_ptr->block_list != NULL);
 
@@ -542,8 +542,8 @@ void test_rc_gc_free_one_block() {
         ASSERT_PTR_NOT_NULL(numbers);
 
         allocator_api->retain(str2);
-        allocator_api->free(str2);
-        allocator_api->free(str2);
+        allocator_api->release(str2);
+        allocator_api->release(str2);
         allocator_api->gc(const_allocator_ptr);
 
         allocator_t* allocator = (allocator_t*)const_allocator_ptr;
@@ -583,7 +583,7 @@ void test_double_linked_list_functionality() {
         ASSERT_PTR_EQ(block1, block2->prev);
         ASSERT_PTR_EQ(block2, block3->prev);
 
-        allocator_api->free(str2);
+        allocator_api->release(str2);
         
         ASSERT_PTR_NULL(block1->prev);
         ASSERT_PTR_EQ(block3, block1->next);

@@ -8,7 +8,7 @@
 static allocator_ptr_t rc_init(void);
 static const_sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size);
 static void* rc_retain(const_sp_ptr_t ptr);
-static void rc_free(const_sp_ptr_t const_smart_ptr);
+static void rc_release(const_sp_ptr_t const_smart_ptr);
 static void rc_gc(allocator_ptr_t const_allocator_ptr);
 static void rc_destroy(const allocator_ptr_t* const_allocator_ptr);
 
@@ -20,7 +20,7 @@ static allocator_api_t reference_counting_allocator = {
     .init = rc_init,
     .alloc = rc_alloc,
     .retain = rc_retain,
-    .free = rc_free,
+    .release = rc_release,
     .gc = rc_gc,
     .destroy = rc_destroy
 #if DEBUG
@@ -84,7 +84,7 @@ void* rc_retain(const_sp_ptr_t const_allocator_ptr) {
     return ptr->ptr;
 }
 
-void rc_free(const_sp_ptr_t const_smart_ptr) {
+void rc_release(const_sp_ptr_t const_smart_ptr) {
     if (!const_smart_ptr || const_smart_ptr->type != SMART_PTR_TYPE) return;
     struct sp* ptr = (struct sp*)const_smart_ptr;
     ptr->ref_count--;

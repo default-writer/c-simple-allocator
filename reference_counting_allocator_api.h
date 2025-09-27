@@ -12,7 +12,7 @@ typedef struct allocator_api
     allocator_ptr_t (*init)(void);
     const_sp_ptr_t (*alloc)(allocator_ptr_t const_allocator_ptr, size_t size);
     void* (*retain)(const_sp_ptr_t ptr);
-    void (*free)(const_sp_ptr_t const_smart_ptr);
+    void (*release)(const_sp_ptr_t const_smart_ptr);
     void (*gc)(allocator_ptr_t const_allocator_ptr);
     void (*destroy)(const allocator_ptr_t* const_allocator_ptr);
 #if DEBUG
