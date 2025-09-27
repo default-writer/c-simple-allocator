@@ -15,9 +15,6 @@ typedef struct allocator_api
     void (*release)(const_sp_ptr_t const_smart_ptr);
     void (*gc)(allocator_ptr_t const_allocator_ptr);
     void (*destroy)(const allocator_ptr_t* const_allocator_ptr);
-#if DEBUG
-    void (*print_statistics)(allocator_ptr_t const_allocator_ptr);
-#endif
 } allocator_api_t;
 
 extern allocator_api_ptr_t allocator_api;

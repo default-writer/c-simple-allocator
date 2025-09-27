@@ -12,10 +12,6 @@ static void rc_release(const_sp_ptr_t const_smart_ptr);
 static void rc_gc(allocator_ptr_t const_allocator_ptr);
 static void rc_destroy(const allocator_ptr_t* const_allocator_ptr);
 
-#if DEBUG
-static void rc_print_statistics(allocator_ptr_t const_allocator_ptr);
-#endif
-
 static allocator_api_t reference_counting_allocator = {
     .init = rc_init,
     .alloc = rc_alloc,
@@ -23,9 +19,6 @@ static allocator_api_t reference_counting_allocator = {
     .release = rc_release,
     .gc = rc_gc,
     .destroy = rc_destroy
-#if DEBUG
-    .print_statistics = rc_print_statistics
-#endif
 };
 
 allocator_api_ptr_t allocator_api = &reference_counting_allocator;
@@ -77,15 +70,15 @@ const_sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size) {
     return smart_pointer;
 }
 
-void* rc_retain(const_sp_ptr_t const_allocator_ptr) {
-    if (!const_allocator_ptr || const_allocator_ptr->type != SMART_PTR_TYPE) return NULL;
-    struct sp* ptr = (struct sp*)const_allocator_ptr;
+void* rc_retain(const_sp_ptr_t const_smart_ptr) {
+    if (!const_smart_ptr) return NULL;
+    struct sp* ptr = (struct sp*)const_smart_ptr;
     ptr->ref_count++;
     return ptr->ptr;
 }
 
 void rc_release(const_sp_ptr_t const_smart_ptr) {
-    if (!const_smart_ptr || const_smart_ptr->type != SMART_PTR_TYPE) return;
+    if (!const_smart_ptr) return;
     struct sp* ptr = (struct sp*)const_smart_ptr;
     ptr->ref_count--;
     if (ptr->ref_count <= 0) {
@@ -132,24 +125,3 @@ void rc_destroy(const allocator_ptr_t* const_allocator_ptr) {
     *allocator_ptr = NULL;
     free(allocator);
 }
-
-#if DEBUG
-void rc_print_statistics(allocator_ptr_t const_allocator_ptr) {
-    if (!const_allocator_ptr || const_allocator_ptr->block_list == NULL || const_allocator_ptr->total_blocks == 0) return;
-    printf("\n=== Memory Status ===\n");
-    allocator_t* allocator = (allocator_t*)const_allocator_ptr;
-    mem_block_t* current = (mem_block_t*)allocator->block_list;
-    int count = 0;
-    
-    while (current) {
-        printf("Block %d: %p, size: %zu\n", count++, current->ptr, current->ptr->size);
-        current = (mem_block_t*)current->next;
-    }
-    
-    if (count == 0) {
-        printf("No allocated blocks\n");
-    }
-    printf("Total blocks: %d\n", allocator->total_blocks);
-    printf("=====================\n\n");
-}
-#endif
