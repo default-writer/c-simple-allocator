@@ -13,12 +13,12 @@ typedef struct allocator {
 } allocator_t;
 
 typedef struct sp {
-    unsigned long ref_count;
-    unsigned long type;
-    size_t size;
     void* ptr;
     mem_block_t* block;
     allocator_t* allocator;
+    size_t size;
+    unsigned long ref_count;
+    unsigned long type;
 } sp_t;
 
 
