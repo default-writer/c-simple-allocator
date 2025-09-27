@@ -68,9 +68,9 @@ const_sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size) {
     smart_pointer->block->ptr = smart_pointer;
     
     block->next = allocator->block_list;
-    block->prev = NULL;  // New block is always inserted at the head, so prev is NULL
+    block->prev = NULL;
     if (allocator->block_list != NULL) {
-        allocator->block_list->prev = block;  // Update the previous head's prev pointer
+        allocator->block_list->prev = block;
     }
     allocator->block_list = block;
     allocator->total_blocks++;

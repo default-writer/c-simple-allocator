@@ -87,7 +87,7 @@ void test_rc_retain_valid_pointer_in_allocator() {
 
         mem_block_t* block = (mem_block_t*)const_allocator_ptr->block_list;
         ASSERT_PTR_NOT_NULL(block);
-        ASSERT_PTR_NULL(block->prev);  // First block should have NULL prev
+        ASSERT_PTR_NULL(block->prev);
         ASSERT_EQ(1, block->ptr->ref_count);
 
         const void* result = allocator_api->retain(ptr);
@@ -130,7 +130,7 @@ void test_rc_retain_multiple_retains() {
 
         mem_block_t* block = (mem_block_t*)const_allocator_ptr->block_list;
         ASSERT_PTR_NOT_NULL(block);
-        ASSERT_PTR_NULL(block->prev);  // First block should have NULL prev
+        ASSERT_PTR_NULL(block->prev);
         ASSERT_EQ(1, block->ptr->ref_count);
 
         const void* result1 = allocator_api->retain(ptr);
@@ -160,7 +160,7 @@ void test_rc_retain_after_release() {
         ASSERT_PTR_EQ(ptr->ptr, result1);
 
         mem_block_t* block = (mem_block_t*)const_allocator_ptr->block_list;
-        ASSERT_PTR_NULL(block->prev);  // First block should have NULL prev
+        ASSERT_PTR_NULL(block->prev);
         ASSERT_EQ(2, block->ptr->ref_count);
 
         allocator_api->free(ptr);
@@ -232,7 +232,7 @@ void test_release_one_reference() {
         ASSERT_PTR_NOT_NULL(allocator);
         ASSERT_EQ(1, allocator->total_blocks);
         ASSERT(allocator->block_list != NULL);
-        ASSERT_PTR_NULL(allocator->block_list->prev);  // First block should have NULL prev
+        ASSERT_PTR_NULL(allocator->block_list->prev);
 
         allocator_api->gc(const_allocator_ptr);
         ASSERT_PTR_NOT_NULL(const_allocator_ptr);
@@ -570,26 +570,21 @@ void test_double_linked_list_functionality() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(str3);
 
-        // Check that the blocks are properly linked
-        mem_block_t* block1 = (mem_block_t*)const_allocator_ptr->block_list;  // Most recently added
+        mem_block_t* block1 = (mem_block_t*)const_allocator_ptr->block_list;
         mem_block_t* block2 = (mem_block_t*)block1->next;
         mem_block_t* block3 = (mem_block_t*)block2->next;
         
-        // Verify the forward links
         ASSERT_PTR_EQ(str3->block, block1);
         ASSERT_PTR_EQ(str2->block, block2);
         ASSERT_PTR_EQ(str1->block, block3);
         ASSERT_PTR_NULL(block3->next);
         
-        // Verify the backward links
-        ASSERT_PTR_NULL(block1->prev);  // First block in list should have NULL prev
+        ASSERT_PTR_NULL(block1->prev);
         ASSERT_PTR_EQ(block1, block2->prev);
         ASSERT_PTR_EQ(block2, block3->prev);
 
-        // Free one block and check that links are still correct
         allocator_api->free(str2);
         
-        // Now block1 should link directly to block3
         ASSERT_PTR_NULL(block1->prev);
         ASSERT_PTR_EQ(block3, block1->next);
         ASSERT_PTR_EQ(block1, block3->prev);
