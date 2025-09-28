@@ -599,6 +599,26 @@ void test_double_linked_list_functionality() {
     } END_TEST;
 }
 
+void test_retain_after_release() {
+    TEST(test_double_linked_list_functionality) {
+        allocator_ptr_t const_allocator_ptr = alloc->init();
+        sp_ptr_t ptr = alloc->alloc(const_allocator_ptr, 20);
+        ASSERT_PTR_NOT_NULL(ptr);
+
+        alloc->retain(ptr);
+        alloc->release(ptr);
+        alloc->release(ptr);
+        alloc->retain(ptr);
+
+        alloc->gc(const_allocator_ptr);
+        ASSERT_PTR_NOT_NULL(const_allocator_ptr);
+        ASSERT_PTR_EQ(NULL, const_allocator_ptr->block_list);
+        ASSERT_EQ(0, const_allocator_ptr->total_blocks);
+        alloc->destroy(&const_allocator_ptr);
+        ASSERT_PTR_EQ(NULL, const_allocator_ptr);
+    } END_TEST;
+}
+
 int main() {
     printf("Running unit tests for reference counting allocator\n");
     printf("==========================================\n\n");
@@ -627,6 +647,7 @@ int main() {
     test_rc_gc_memory_cleanup();
     test_rc_gc_free_one_block();
     test_double_linked_list_functionality();
+    test_retain_after_release();
 
     printf("\n==========================================\n");
     printf("Tests run: %d\n", tests_run);
