@@ -57,7 +57,6 @@ allocator_ptr_t re_init(void) {
             return NULL;
         }
     }
-    memset(memory_block, 0, MEMORY_SIZE);
     memory_offset = 0;
     allocator_t* allocator = _malloc(sizeof(allocator_t));
     if (!allocator) return NULL;
