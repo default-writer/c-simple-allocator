@@ -8,7 +8,7 @@
 #endif
 
 #include "src/api/alloc.h"
-#include "src/rc/alloc.h"
+#include "src/alloc.h"
 
 static int tests_run = 0;
 static int tests_passed = 0;
@@ -216,7 +216,7 @@ void test_basic_allocation() {
 
         if (str) {
             const char *data = "Hello, world!";
-            strcpy_s((char*)(str->ptr), 20, data);
+            strcpy((char*)(str->ptr), data);
             ASSERT_PTR_NOT_NULL(str->ptr);
         }
 

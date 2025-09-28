@@ -10,7 +10,7 @@ int main(void) {
     if (str) {
         const char *data = "Hello, world!";
         char *ptr = (char*)alloc->retain(str);
-        strcpy_s(ptr, 20, data);
+        strcpy(ptr, data);
         printf("Allocated string: %s\n", ptr);
     }
 

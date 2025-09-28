@@ -28,7 +28,20 @@
             "linux": {
                 "program": "${workspaceFolder}/test"
             },
+        },
+        {
+            "program": "",
+            "name": "bump_alloc",
+            "type": "lldb-dap",
+            "request": "launch",
+            "preLaunchTask": "bump_alloc",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "program": "${workspaceFolder}/bump_alloc.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/bump_alloc"
+            },
         }
-
     ]
 }

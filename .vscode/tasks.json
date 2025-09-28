@@ -66,6 +66,27 @@
                     "test"
                 ]
             }
+        },
+        {
+            "label": "bump_alloc",
+            "type": "shell",
+            "group": "test",
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "bump_alloc"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "bump_alloc"
+                ]
+            }
         }
     ]
 }
