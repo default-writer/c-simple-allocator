@@ -258,7 +258,6 @@ try {
             Write-Host "$ninjaName added to user PATH."
         }
     }
-    
     Write-Host "Installation complete."
     Pause
 } catch {

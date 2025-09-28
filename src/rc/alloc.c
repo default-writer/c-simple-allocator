@@ -6,11 +6,11 @@
 #include "alloc.h"
 
 static allocator_ptr_t rc_init(void);
-static sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size);
+static sp_ptr_t rc_alloc(allocator_ptr_t ptr, size_t size);
 static void* rc_retain(sp_ptr_t ptr);
 static void rc_release(sp_ptr_t sp);
-static void rc_gc(allocator_ptr_t const_allocator_ptr);
-static void rc_destroy(const allocator_ptr_t* const_allocator_ptr);
+static void rc_gc(allocator_ptr_t ptr);
+static void rc_destroy(const allocator_ptr_t* ptr);
 
 static alloc_t reference_counting_allocator = {
     .init = rc_init,
@@ -31,42 +31,37 @@ allocator_ptr_t rc_init(void) {
     return allocator;
 }
 
-sp_ptr_t rc_alloc(allocator_ptr_t const_allocator_ptr, size_t size) {
+sp_ptr_t rc_alloc(allocator_ptr_t allocator, size_t size) {
     void* ptr = malloc(size);
     if (!ptr) {
         return NULL;
     }
-    
     mem_block_t* block = malloc(sizeof(mem_block_t));
     if (!block) {
         free(ptr);
         return NULL;
     }
-    
     struct sp* smart_pointer = malloc(sizeof(struct sp));
     if (!smart_pointer) {
         free(ptr);
         free(block);
         return NULL;
     }
-
-    allocator_t* allocator = (allocator_t*)const_allocator_ptr;
-
+    allocator_t* _allocator = (allocator_t*)allocator;
     smart_pointer->ref_count = 1;
     smart_pointer->type = SMART_PTR_TYPE;
     smart_pointer->size = size;
     smart_pointer->ptr = ptr;
-    smart_pointer->allocator = allocator;
+    smart_pointer->allocator = _allocator;
     smart_pointer->block = block;
     smart_pointer->block->ptr = smart_pointer;
-    
     block->next = allocator->block_list;
     block->prev = NULL;
     if (allocator->block_list != NULL) {
         allocator->block_list->prev = block;
     }
-    allocator->block_list = block;
-    allocator->total_blocks++;
+    _allocator->block_list = block;
+    _allocator->total_blocks++;
     return smart_pointer;
 }
 
@@ -84,7 +79,6 @@ void rc_release(sp_ptr_t sp) {
     if (ptr->ref_count <= 0) {
         allocator_t* allocator = (allocator_t*)ptr->allocator;
         mem_block_t* current = ptr->block;
-        
         if (current && current->ptr == ptr) {
             if (current->next != NULL) {
                 current->next->prev = current->prev;
@@ -102,9 +96,9 @@ void rc_release(sp_ptr_t sp) {
     }
 }
 
-void rc_gc(allocator_ptr_t const_allocator_ptr) {
-    if (!const_allocator_ptr || const_allocator_ptr->block_list == NULL || const_allocator_ptr->total_blocks == 0) return;
-    allocator_t* allocator = (allocator_t*)const_allocator_ptr;
+void rc_gc(allocator_ptr_t ptr) {
+    if (!ptr || ptr->block_list == NULL || ptr->total_blocks == 0) return;
+    allocator_t* allocator = (allocator_t*)ptr;
     mem_block_t* current = (mem_block_t*)allocator->block_list;
     while (current) {
         mem_block_t* next = (mem_block_t*)current->next;
@@ -118,10 +112,10 @@ void rc_gc(allocator_ptr_t const_allocator_ptr) {
     allocator->block_list = NULL;
 }
 
-void rc_destroy(const allocator_ptr_t* const_allocator_ptr) {
-    if (const_allocator_ptr == NULL || *const_allocator_ptr == NULL) return;
-    allocator_ptr_t* allocator_ptr = (allocator_ptr_t*)const_allocator_ptr;
-    allocator_t* allocator = (allocator_t*)*const_allocator_ptr;
+void rc_destroy(const allocator_ptr_t* ptr) {
+    if (ptr == NULL || *ptr == NULL) return;
+    allocator_ptr_t* allocator_ptr = (allocator_ptr_t*)ptr;
+    allocator_t* allocator = (allocator_t*)*ptr;
     *allocator_ptr = NULL;
     free(allocator);
 }

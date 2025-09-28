@@ -4,10 +4,9 @@
 #include "src/api/alloc.h"
 
 int main(void) {
-    allocator_ptr_t const_allocator_ptr = alloc->init();
-    
+    allocator_ptr_t ptr = alloc->init();
     printf("Allocating memory for a string...\n");
-    sp_ptr_t str = alloc->alloc(const_allocator_ptr, 20);
+    sp_ptr_t str = alloc->alloc(ptr, 20);
     if (str) {
         const char *data = "Hello, world!";
         char *ptr = (char*)alloc->retain(str);
@@ -22,12 +21,10 @@ int main(void) {
     }
     printf("\nReleasing one reference...\n");
     alloc->release(str);
-    
     printf("\nReleasing final reference...\n");
     alloc->release(str);
-    
     printf("\nAllocating memory for an array...\n");
-    sp_ptr_t numbers = alloc->alloc(const_allocator_ptr, sizeof(int) * 5);
+    sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
     if (numbers) {
         int* numbers_ptr = (int*)alloc->retain(numbers);
         for (int i = 0; i < 5; i++) {
@@ -39,11 +36,10 @@ int main(void) {
         }
         printf("\n");
     }
-    
     printf("\nReleasing array...\n");
     alloc->release(numbers);
-    alloc->gc(const_allocator_ptr);
-    alloc->destroy(&const_allocator_ptr);
+    alloc->gc(ptr);
+    alloc->destroy(&ptr);
 
     printf("\nDemo completed!\n");
     return 0;
