@@ -18,10 +18,12 @@ rule link
 # Build statements for object files
 build main.o: cc main.c
 build alloc.o: cc src/rc/alloc.c
+build bump_alloc.o: cc src/bump/alloc.c
 build test.o: cc test.c
 
 # Build statement for the executable
 build main: link main.o alloc.o
+build bump_alloc: link test.o bump_alloc.o
 build test: link test.o alloc.o
 
 # Default target

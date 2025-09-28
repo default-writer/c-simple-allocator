@@ -1,5 +1,5 @@
-#ifndef REFERENCE_COUNTING_ALLOCATOR_H
-#define REFERENCE_COUNTING_ALLOCATOR_H
+#ifndef ALLOC_H
+#define ALLOC_H
 
 typedef struct mem_block {
     struct sp* ptr;
@@ -21,5 +21,4 @@ typedef struct sp {
     unsigned long type;
 } sp_t;
 
-
-#endif // REFERENCE_COUNTING_ALLOCATOR_H
+#endif // ALLOC_H
