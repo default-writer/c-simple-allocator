@@ -3,16 +3,45 @@
 #include <string.h>
 #include <assert.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "src/api/alloc.h"
 #include "src/rc/alloc.h"
 
 static int tests_run = 0;
 static int tests_passed = 0;
 
+const char* GREEN = "";
+const char* RED = "";
+const char* RESET = "";
+
+void setup_console() {
+#ifdef _WIN32
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut != INVALID_HANDLE_VALUE) {
+        DWORD dwMode = 0;
+        if (GetConsoleMode(hOut, &dwMode)) {
+            dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            if (SetConsoleMode(hOut, dwMode)) {
+                GREEN = "\033[0;32m";
+                RED = "\033[0;31m";
+                RESET = "\033[0m";
+            }
+        }
+    }
+#else
+    GREEN = "\033[0;32m";
+    RED = "\033[0;31m";
+    RESET = "\033[0m";
+#endif
+}
+
 #define TEST(name) \
     do { \
         tests_run++; \
-        printf("Running test: %s...\n", #name); \
+        printf("Running test: %s...", #name); \
         int passed = 1; \
         do
 
@@ -20,9 +49,9 @@ static int tests_passed = 0;
         while (0); \
         if (passed) { \
             tests_passed++; \
-            printf("  PASSED\n"); \
+            printf("%s  PASSED%s\n", GREEN, RESET); \
         } else { \
-            printf("  FAILED\n"); \
+            printf("%s  FAILED%s\n", RED, RESET); \
         } \
     } while (0)
 
@@ -620,6 +649,7 @@ void test_retain_after_release() {
 }
 
 int main() {
+    setup_console();
     printf("Running unit tests for reference counting allocator\n");
     printf("==========================================\n\n");
     
@@ -654,10 +684,10 @@ int main() {
     printf("Tests passed: %d\n", tests_passed);
     
     if (tests_run == tests_passed) {
-        printf("All tests PASSED!\n");
+        printf("%sAll tests PASSED!%s\n", GREEN, RESET);
         return 0;
     } else {
-        printf("Some tests FAILED!\n");
+        printf("%sSome tests FAILED!%s\n", RED, RESET);
         return 1;
     }
 }
