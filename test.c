@@ -112,7 +112,7 @@ void test_rc_retain_valid_pointer_in_allocator() {
     TEST(test_rc_retain_valid_pointer_in_allocator) {
         allocator_ptr_t ptr = alloc->init();
         sp_ptr_t sp = alloc->alloc(ptr, 10);
-        ASSERT_PTR_NOT_NULL(ptr);
+        ASSERT_PTR_NOT_NULL(sp);
 
         mem_block_t* block = (mem_block_t*)ptr->block_list;
         ASSERT_PTR_NOT_NULL(block);
@@ -155,7 +155,7 @@ void test_rc_retain_multiple_retains() {
     TEST(test_rc_retain_multiple_retains) {
         allocator_ptr_t ptr = alloc->init();
         sp_ptr_t sp = alloc->alloc(ptr, 10);
-        ASSERT_PTR_NOT_NULL(ptr);
+        ASSERT_PTR_NOT_NULL(sp);
 
         mem_block_t* block = (mem_block_t*)ptr->block_list;
         ASSERT_PTR_NOT_NULL(block);
@@ -183,7 +183,7 @@ void test_rc_retain_after_release() {
     TEST(test_rc_retain_after_release) {
         allocator_ptr_t ptr = alloc->init();
         sp_ptr_t sp = alloc->alloc(ptr, 10);
-        ASSERT_PTR_NOT_NULL(ptr);
+        ASSERT_PTR_NOT_NULL(sp);
 
         const void* result1 = alloc->retain(sp);
         ASSERT_PTR_EQ(sp->ptr, result1);
