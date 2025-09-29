@@ -1,6 +1,8 @@
 #ifndef ALLOC_H
 #define ALLOC_H
 
+#include <stdlib.h>
+
 typedef struct mem_block {
     struct sp* ptr;
     struct mem_block* next;
