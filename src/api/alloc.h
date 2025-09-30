@@ -1,6 +1,8 @@
 #ifndef API_ALLOC_H
 #define API_ALLOC_H
 
+#include <stdlib.h>
+
 #define SMART_PTR_TYPE 1
 
 typedef const struct sp* sp_ptr_t;
