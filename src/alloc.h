@@ -2,6 +2,7 @@
 #define ALLOC_H
 
 #include <stdlib.h>
+#include <stddef.h>
 
 typedef struct mem_block {
     struct sp* ptr;

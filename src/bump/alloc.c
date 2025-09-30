@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MEMORY_SIZE 4096 // 4KB
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -11,26 +13,24 @@
 #include "../api/alloc.h"
 #include "../alloc.h"
 
-#define MEMORY_SIZE 4096 // 4KB
+static allocator_ptr_t _init(void);
+static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
+static void* _retain(sp_ptr_t ptr);
+static void _release(sp_ptr_t sp);
+static void _gc(allocator_ptr_t ptr);
+static void _destroy(const allocator_ptr_t* ptr);
 
-static allocator_ptr_t re_init(void);
-static sp_ptr_t rc_alloc(allocator_ptr_t ptr, size_t size);
-static void* rc_retain(sp_ptr_t ptr);
-static void rc_release(sp_ptr_t sp);
-static void rc_gc(allocator_ptr_t ptr);
-static void rc_destroy(const allocator_ptr_t* ptr);
+static alloc_t reference_counting_allocator = {
+    .init = _init,
+    .alloc = _alloc,
+    .retain = _retain,
+    .release = _release,
+    .gc = _gc,
+    .destroy = _destroy
+};
 
 static void* memory_block = NULL;
 static size_t memory_offset = 0;
-
-static alloc_t reference_counting_allocator = {
-    .init = re_init,
-    .alloc = rc_alloc,
-    .retain = rc_retain,
-    .release = rc_release,
-    .gc = rc_gc,
-    .destroy = rc_destroy
-};
 
 alloc_ptr_t alloc = &reference_counting_allocator;
 
@@ -46,7 +46,7 @@ static void* _malloc(size_t size) {
     return ptr;
 }
 
-allocator_ptr_t re_init(void) {
+allocator_ptr_t _init(void) {
     if (memory_block == NULL) {
 #ifdef _WIN32
         memory_block = VirtualAlloc(NULL, MEMORY_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -65,7 +65,7 @@ allocator_ptr_t re_init(void) {
     return allocator;
 }
 
-sp_ptr_t rc_alloc(allocator_ptr_t allocator, size_t size) {
+sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
     void* ptr = _malloc(size);
     if (!ptr) {
         return NULL;
@@ -99,14 +99,14 @@ sp_ptr_t rc_alloc(allocator_ptr_t allocator, size_t size) {
     return smart_pointer;
 }
 
-void* rc_retain(sp_ptr_t sp) {
+void* _retain(sp_ptr_t sp) {
     if (!sp || sp->type != SMART_PTR_TYPE) return NULL;
     struct sp* ptr = (struct sp*)sp;
     ptr->ref_count++;
     return ptr->ptr;
 }
 
-void rc_release(sp_ptr_t sp) {
+void _release(sp_ptr_t sp) {
     if (!sp || sp->type != SMART_PTR_TYPE) return;
     struct sp* ptr = (struct sp*)sp;
     ptr->ref_count--;
@@ -130,7 +130,7 @@ void rc_release(sp_ptr_t sp) {
     }
 }
 
-void rc_gc(allocator_ptr_t ptr) {
+void _gc(allocator_ptr_t ptr) {
     if (!ptr || ptr->block_list == NULL || ptr->total_blocks == 0) return;
     allocator_t* allocator = (allocator_t*)ptr;
     mem_block_t* current = (mem_block_t*)allocator->block_list;
@@ -146,7 +146,7 @@ void rc_gc(allocator_ptr_t ptr) {
     allocator->block_list = NULL;
 }
 
-void rc_destroy(const allocator_ptr_t* ptr) {
+void _destroy(const allocator_ptr_t* ptr) {
     if (ptr == NULL || *ptr == NULL) return;
     allocator_ptr_t* allocator_ptr = (allocator_ptr_t*)ptr;
     //allocator_t* allocator = (allocator_t*)*ptr;
