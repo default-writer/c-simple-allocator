@@ -68,7 +68,7 @@
             }
         },
         {
-            "label": "bump_alloc",
+            "label": "bump",
             "type": "shell",
             "group": "test",
             "windows": {
@@ -85,6 +85,27 @@
                     "-f",
                     "build.linux.ninja",
                     "bump_alloc"
+                ]
+            }
+        },
+        {
+            "label": "bucket",
+            "type": "shell",
+            "group": "test",
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "bucket_alloc"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "bucket_alloc"
                 ]
             }
         }
