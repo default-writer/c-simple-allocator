@@ -5,7 +5,6 @@ CompileFlags:
 Diagnostics:
   ClangTidy:
     Add:
-      - readability-function-cognitive-complexity
       - performance-unnecessary-value-param
 
 InlayHints:
