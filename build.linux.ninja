@@ -33,7 +33,7 @@ default main
 
 # Clean rule
 rule clean
-  command = rm -f *.o main test 2>/dev/null || exit 0
+  command = rm -f *.o *. 2>/dev/null || exit 0
   description = Clean
   generator = 1
 

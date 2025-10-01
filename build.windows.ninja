@@ -33,7 +33,7 @@ default main
 
 # Clean rule
 rule clean
-  command = cmd /c "del *.obj *.pdb main.exe test.exe 2>nul || exit 0"
+  command = cmd /c "del *.obj *.pdb *.exe 2>nul || exit 0"
   description = Clean
   generator = 1
 
