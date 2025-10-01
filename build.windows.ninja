@@ -17,14 +17,16 @@ rule link
 
 # Build statements for object files
 build main.obj: cc main.c
-build alloc.obj: cc src/rc/alloc.c
-build bump_alloc.obj: cc src/bump/alloc.c
 build test.obj: cc test.c
+build reference_alloc.obj: cc src/reference/alloc.c
+build bump_alloc.obj: cc src/bump/alloc.c
+build bucket_alloc.obj: cc src/bucket/alloc.c
 
 # Build statement for the executable
-build main: link main.obj alloc.obj
+build main: link main.obj reference_alloc.obj
+build reference_alloc: link test.obj reference_alloc.obj
 build bump_alloc: link test.obj bump_alloc.obj
-build test: link test.obj alloc.obj
+build bucket_alloc: link test.obj bucket_alloc.obj
 
 # Default target
 default main

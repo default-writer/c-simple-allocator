@@ -16,7 +16,7 @@
 static allocator_ptr_t _init(void);
 static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
 static void* _retain(sp_ptr_t ptr);
-static void _release(sp_ptr_t sp);
+static void _release(const sp_ptr_t* sp);
 static void _gc(allocator_ptr_t ptr);
 static void _destroy(const allocator_ptr_t* ptr);
 
@@ -106,9 +106,10 @@ void* _retain(sp_ptr_t sp) {
     return ptr->ptr;
 }
 
-void _release(sp_ptr_t sp) {
-    if (!sp || sp->type != SMART_PTR_TYPE) return;
-    struct sp* ptr = (struct sp*)sp;
+void _release(const sp_ptr_t* sp) {
+    if (!sp || !(*sp) || (*sp)->type != SMART_PTR_TYPE) return;
+    sp_ptr_t* sp_ptr = (sp_ptr_t*)sp;
+    sp_t* ptr = (sp_t*)(*sp);
     ptr->ref_count--;
     if (ptr->ref_count <= 0) {
         allocator_t* allocator = (allocator_t*)ptr->allocator;
@@ -127,6 +128,7 @@ void _release(sp_ptr_t sp) {
         }
         // free(ptr->ptr); // Cannot free from bump allocator
         // free(ptr); // Cannot free from bump allocator
+        *sp_ptr = NULL;
     }
 }
 

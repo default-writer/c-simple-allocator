@@ -2,7 +2,28 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "clean",
+            "type": "shell",
+            "group": "build",
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "clean"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "clean",
+                ]
+            }
+        },
+        {
+            "label": "main",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -26,28 +47,7 @@
             }
         },
         {
-            "label": "clean",
-            "type": "shell",
-            "group": "build",
-            "windows": {
-                "command": "ninja",
-                "args": [
-                    "-f",
-                    "build.windows.ninja",
-                    "clean"
-                ]
-            },
-            "linux": {
-                "command": "ninja",
-                "args": [
-                    "-f",
-                    "build.linux.ninja",
-                    "clean",
-                ]
-            }
-        },
-        {
-            "label": "test",
+            "label": "reference_alloc",
             "type": "shell",
             "group": "test",
             "windows": {
@@ -55,7 +55,7 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "test"
+                    "reference_alloc"
                 ]
             },
             "linux": {
@@ -63,12 +63,12 @@
                 "args": [
                     "-f",
                     "build.linux.ninja",
-                    "test"
+                    "reference_alloc"
                 ]
             }
         },
         {
-            "label": "bump",
+            "label": "bump_alloc",
             "type": "shell",
             "group": "test",
             "windows": {
@@ -89,7 +89,7 @@
             }
         },
         {
-            "label": "bucket",
+            "label": "bucket_alloc",
             "type": "shell",
             "group": "test",
             "windows": {

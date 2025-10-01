@@ -13,10 +13,31 @@
 #include "../api/alloc.h"
 #include "../alloc.h"
 
+#define BUCKET_COUNT 9
+extern const size_t bucket_sizes[BUCKET_COUNT];
+
+typedef struct free_list_node {
+    struct free_list_node* next;
+    struct free_list_node* prev;
+} free_list_node_t;
+
+typedef struct bucket {
+    free_list_node_t* free_list;
+    size_t block_size;
+} bucket_t;
+
+typedef struct bucket_allocator {
+    allocator_t base;
+    bucket_t buckets[BUCKET_COUNT];
+    void* memory_block;
+    size_t memory_offset;
+    size_t memory_size;
+} bucket_allocator_t;
+
 static allocator_ptr_t _init(void);
 static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
 static void* _retain(sp_ptr_t ptr);
-static void _release(sp_ptr_t sp);
+static void _release(const sp_ptr_t* sp);
 static void _gc(allocator_ptr_t ptr);
 static void _destroy(const allocator_ptr_t* ptr);
 
@@ -152,13 +173,12 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
     return smart_pointer;
 }
 
-void _release(sp_ptr_t sp) {
-    if (!sp || sp->type != SMART_PTR_TYPE) return;
-    
-    sp_t* ptr = (sp_t*)sp;
+void _release(const sp_ptr_t* sp) {
+    if (!sp || !(*sp) || (*sp)->type != SMART_PTR_TYPE) return;
+    sp_ptr_t* sp_ptr = (sp_ptr_t*)sp;
+    sp_t* ptr = (sp_t*)(*sp);
     if (ptr->ref_count == 0) return;
     ptr->ref_count--;
-
     if (ptr->ref_count <= 0) {
         bucket_allocator_t* allocator = (bucket_allocator_t*)((char*)ptr->allocator - offsetof(bucket_allocator_t, base));
         mem_block_t* current = ptr->block;
@@ -183,6 +203,7 @@ void _release(sp_ptr_t sp) {
 
         int mb_bucket_index = find_bucket_index(sizeof(mem_block_t));
         _free_to_bucket(allocator, mb_bucket_index, current);
+        *sp_ptr = NULL;
     }
 }
 

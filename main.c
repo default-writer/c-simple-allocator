@@ -20,9 +20,9 @@ int main(void) {
         printf("Retained string: %s\n", str2);
     }
     printf("\nReleasing one reference...\n");
-    alloc->release(str);
+    alloc->release(&str);
     printf("\nReleasing final reference...\n");
-    alloc->release(str);
+    alloc->release(&str);
     printf("\nAllocating memory for an array...\n");
     sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
     if (numbers) {
@@ -37,7 +37,7 @@ int main(void) {
         printf("\n");
     }
     printf("\nReleasing array...\n");
-    alloc->release(numbers);
+    alloc->release(&numbers);
     alloc->gc(ptr);
     alloc->destroy(&ptr);
 

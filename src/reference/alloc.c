@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MEMORY_SIZE (4096 * 100) // 400KB initial memory block
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -14,10 +16,16 @@
 static allocator_ptr_t _init(void);
 static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
 static void* _retain(sp_ptr_t ptr);
-static void _release(sp_ptr_t sp);
+static void _release(const sp_ptr_t* sp);
 static void _gc(allocator_ptr_t ptr);
 static void _destroy(const allocator_ptr_t* ptr);
 
+typedef struct memory_block
+{
+    void* ptr;
+    int size;
+} memory_block_t;
+ 
 static alloc_t reference_counting_allocator = {
     .init = _init,
     .alloc = _alloc,
@@ -29,8 +37,29 @@ static alloc_t reference_counting_allocator = {
 
 alloc_ptr_t alloc = &reference_counting_allocator;
 
+static void* _malloc(size_t size) {
+    memory_block_t* memory_block_ptr;
+#ifdef _WIN32
+    memory_block_ptr = VirtualAlloc(NULL, sizeof(memory_block_t) + size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+#else
+    memory_block_ptr = mmap(NULL, sizeof(memory_block_t) + size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+#endif
+    memory_block_ptr->size = sizeof(memory_block_t) + size;
+    memory_block_ptr->ptr = (void*)(memory_block_ptr + 1);
+    return memory_block_ptr->ptr;
+}
+
+static void _free(void* ptr) {
+    memory_block_t* memory_block_ptr = ((memory_block_t*)ptr - 1);
+    #ifdef _WIN32
+        VirtualFree(memory_block_ptr, 0, MEM_RELEASE);
+    #else
+        munmap(memory_block_ptr, memory_block_ptr->size);
+    #endif
+}
+
 allocator_ptr_t _init(void) {
-    allocator_t* allocator = malloc(sizeof(allocator_t));
+    allocator_t* allocator = _malloc(sizeof(allocator_t));
     if (!allocator) return NULL;
     allocator->block_list = NULL;
     allocator->total_blocks = 0;
@@ -38,19 +67,19 @@ allocator_ptr_t _init(void) {
 }
 
 sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
-    void* ptr = malloc(size);
+    void* ptr = _malloc(size);
     if (!ptr) {
         return NULL;
     }
-    mem_block_t* block = malloc(sizeof(mem_block_t));
+    mem_block_t* block = _malloc(sizeof(mem_block_t));
     if (!block) {
-        free(ptr);
+        _free(ptr);
         return NULL;
     }
-    struct sp* smart_pointer = malloc(sizeof(struct sp));
+    struct sp* smart_pointer = _malloc(sizeof(struct sp));
     if (!smart_pointer) {
-        free(ptr);
-        free(block);
+        _free(ptr);
+        _free(block);
         return NULL;
     }
     allocator_t* _allocator = (allocator_t*)allocator;
@@ -60,11 +89,11 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
     smart_pointer->ptr = ptr;
     smart_pointer->allocator = _allocator;
     smart_pointer->block = block;
-    smart_pointer->block->ptr = smart_pointer;
-    block->next = allocator->block_list;
+    block->ptr = smart_pointer;
+    block->next = _allocator->block_list;
     block->prev = NULL;
-    if (allocator->block_list != NULL) {
-        allocator->block_list->prev = block;
+    if (_allocator->block_list != NULL) {
+        _allocator->block_list->prev = block;
     }
     _allocator->block_list = block;
     _allocator->total_blocks++;
@@ -78,9 +107,10 @@ void* _retain(sp_ptr_t sp) {
     return ptr->ptr;
 }
 
-void _release(sp_ptr_t sp) {
-    if (!sp || sp->type != SMART_PTR_TYPE) return;
-    struct sp* ptr = (struct sp*)sp;
+void _release(const sp_ptr_t* sp) {
+    if (!sp || !(*sp) || (*sp)->type != SMART_PTR_TYPE) return;
+    sp_ptr_t* sp_ptr = (sp_ptr_t*)sp;
+    sp_t* ptr = (sp_t*)(*sp);
     ptr->ref_count--;
     if (ptr->ref_count <= 0) {
         allocator_t* allocator = (allocator_t*)ptr->allocator;
@@ -94,11 +124,12 @@ void _release(sp_ptr_t sp) {
             } else {
                 allocator->block_list = current->next;
             }
-            free(current);
+            _free(current);
             allocator->total_blocks--;
         }
-        free(ptr->ptr);
-        free(ptr);
+        _free(ptr->ptr);
+        _free(ptr);
+        *sp_ptr = NULL;
     }
 }
 
@@ -109,9 +140,9 @@ void _gc(allocator_ptr_t ptr) {
     while (current) {
         mem_block_t* next = (mem_block_t*)current->next;
         struct sp* ptr = (struct sp*)current->ptr;
-        free(ptr->ptr);
-        free(ptr);
-        free(current);
+        _free(ptr->ptr);
+        _free(ptr);
+        _free(current);
         allocator->total_blocks--;
         current = next;
     }
@@ -123,5 +154,5 @@ void _destroy(const allocator_ptr_t* ptr) {
     allocator_ptr_t* allocator_ptr = (allocator_ptr_t*)ptr;
     allocator_t* allocator = (allocator_t*)*ptr;
     *allocator_ptr = NULL;
-    free(allocator);
+    _free(allocator);
 }

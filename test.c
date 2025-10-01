@@ -135,10 +135,10 @@ void test_rc_retain_valid_pointer_not_in_allocator() {
     TEST(test_rc_retain_valid_pointer_not_in_allocator) {
         allocator_ptr_t ptr = alloc->init();
         int dummy_value = 42;
-        struct sp* sp = (struct sp*)&dummy_value;
+        sp_ptr_t sp = (sp_ptr_t)&dummy_value;
 
         const void* result = alloc->retain(sp);
-        alloc->release(sp);
+        alloc->release(&sp);
         ASSERT_PTR_NULL(result);
 
         alloc->gc(ptr);
@@ -191,7 +191,7 @@ void test_rc_retain_after_release() {
         ASSERT_PTR_NULL(block->prev);
         ASSERT_EQ(2, block->ptr->ref_count);
 
-        alloc->release(sp);
+        alloc->release(&sp);
         ASSERT_EQ(1, block->ptr->ref_count);
 
         const void* result2 = alloc->retain(sp);
@@ -255,7 +255,7 @@ void test_release_one_reference() {
         char* str2 = alloc->retain(str);
         ASSERT_PTR_NOT_NULL(str2);
 
-        alloc->release(str);
+        alloc->release(&str);
         allocator_t* allocator = (allocator_t*)ptr;
         ASSERT_PTR_NOT_NULL(allocator);
         ASSERT_EQ(1, allocator->total_blocks);
@@ -328,8 +328,8 @@ void test_release_all_references_to_string() {
         char* str2 = alloc->retain(str);
         ASSERT_PTR_NOT_NULL(str2);
 
-        alloc->release(str);
-        alloc->release(str);
+        alloc->release(&str);
+        alloc->release(&str);
 
         alloc->gc(ptr);
         ASSERT_PTR_NOT_NULL(ptr);
@@ -348,7 +348,7 @@ void test_release_one_reference_to_array() {
 
         int* numbers2 = alloc->retain(numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
-        alloc->release(numbers);
+        alloc->release(&numbers);
 
         alloc->gc(ptr);
         ASSERT_PTR_NOT_NULL(ptr);
@@ -368,8 +368,8 @@ void test_release_final_reference_to_array() {
         int* numbers2 = alloc->retain(numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
 
-        alloc->release(numbers);
-        alloc->release(numbers);
+        alloc->release(&numbers);
+        alloc->release(&numbers);
 
         allocator_t* allocator = (allocator_t*)ptr;
         ASSERT_PTR_NOT_NULL(allocator);
@@ -391,8 +391,8 @@ void test_release_already_freed_memory() {
         sp_ptr_t str = alloc->alloc(ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
-        alloc->release(str);
-        alloc->release(str);
+        alloc->release(&str);
+        alloc->release(&str);
 
         alloc->gc(ptr);
         ASSERT_PTR_NOT_NULL(ptr);
@@ -451,7 +451,7 @@ void test_rc_gc_free_block_1_of_3() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        alloc->release(str1);
+        alloc->release(&str1);
         ASSERT_EQ(2, ptr->total_blocks);
         ASSERT(ptr->block_list != NULL);
 
@@ -484,7 +484,7 @@ void test_rc_gc_free_block_2_of_3() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        alloc->release(str2);
+        alloc->release(&str2);
         ASSERT_EQ(2, ptr->total_blocks);
         ASSERT(ptr->block_list != NULL);
 
@@ -518,7 +518,7 @@ void test_rc_gc_free_block_3_of_3() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        alloc->release(numbers);
+        alloc->release(&numbers);
         ASSERT_EQ(2, ptr->total_blocks);
         ASSERT(ptr->block_list != NULL);
 
@@ -570,8 +570,8 @@ void test_rc_gc_free_one_block() {
         ASSERT_PTR_NOT_NULL(numbers);
 
         alloc->retain(str2);
-        alloc->release(str2);
-        alloc->release(str2);
+        alloc->release(&str2);
+        alloc->release(&str2);
         alloc->gc(ptr);
 
         allocator_t* allocator = (allocator_t*)ptr;
@@ -609,7 +609,7 @@ void test_double_linked_list_functionality() {
         ASSERT_PTR_EQ(block1, block2->prev);
         ASSERT_PTR_EQ(block2, block3->prev);
 
-        alloc->release(str2);
+        alloc->release(&str2);
         ASSERT_PTR_NULL(block1->prev);
         ASSERT_PTR_EQ(block3, block1->next);
         ASSERT_PTR_EQ(block1, block3->prev);
@@ -631,8 +631,8 @@ void test_retain_after_release() {
         ASSERT_PTR_NOT_NULL(sp);
 
         alloc->retain(sp);
-        alloc->release(sp);
-        alloc->release(sp);
+        alloc->release(&sp);
+        alloc->release(&sp);
         alloc->retain(sp);
 
         alloc->gc(ptr);

@@ -3,10 +3,10 @@
     "configurations": [
         {
             "program": "",
-            "name": "debug",
+            "name": "main",
             "type": "lldb-dap",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "main",
             "cwd": "${workspaceFolder}",
             "windows": {
                 "program": "${workspaceFolder}/main.exe"
@@ -17,16 +17,16 @@
         },
         {
             "program": "",
-            "name": "test",
+            "name": "reference_alloc",
             "type": "lldb-dap",
             "request": "launch",
-            "preLaunchTask": "test",
+            "preLaunchTask": "reference_alloc",
             "cwd": "${workspaceFolder}",
             "windows": {
-                "program": "${workspaceFolder}/test.exe"
+                "program": "${workspaceFolder}/reference_alloc.exe"
             },
             "linux": {
-                "program": "${workspaceFolder}/test"
+                "program": "${workspaceFolder}/reference_alloc"
             },
         },
         {
@@ -41,6 +41,20 @@
             },
             "linux": {
                 "program": "${workspaceFolder}/bump_alloc"
+            },
+        },
+        {
+            "program": "",
+            "name": "bucket_alloc",
+            "type": "lldb-dap",
+            "request": "launch",
+            "preLaunchTask": "bucket_alloc",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "program": "${workspaceFolder}/bucket_alloc.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/bucket_alloc"
             },
         }
     ]
