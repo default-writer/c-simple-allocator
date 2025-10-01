@@ -101,7 +101,7 @@ void test_rc_retain_null_pointer() {
 
         allocator_ptr_t ptr = NULL;
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         alloc->destroy(&ptr);
         ASSERT_PTR_EQ(NULL, ptr);
     } END_TEST;
@@ -118,11 +118,11 @@ void test_rc_retain_valid_pointer_in_allocator() {
         ASSERT_PTR_NULL(block->prev);
         ASSERT_EQ(1, block->ptr->ref_count);
 
-        const void* result = alloc->retain(sp);
+        const void* result = alloc->retain(&sp);
         ASSERT_PTR_EQ(sp->ptr, result);
         ASSERT_EQ(2, block->ptr->ref_count);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -137,11 +137,11 @@ void test_rc_retain_valid_pointer_not_in_allocator() {
         int dummy_value = 42;
         sp_ptr_t sp = (sp_ptr_t)&dummy_value;
 
-        const void* result = alloc->retain(sp);
+        const void* result = alloc->retain(&sp);
         alloc->release(&sp);
         ASSERT_PTR_NULL(result);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -161,15 +161,15 @@ void test_rc_retain_multiple_retains() {
         ASSERT_PTR_NULL(block->prev);
         ASSERT_EQ(1, block->ptr->ref_count);
 
-        const void* result1 = alloc->retain(sp);
-        const void* result2 = alloc->retain(sp);
-        const void* result3 = alloc->retain(sp);
+        const void* result1 = alloc->retain(&sp);
+        const void* result2 = alloc->retain(&sp);
+        const void* result3 = alloc->retain(&sp);
         ASSERT_PTR_EQ(sp->ptr, result1);
         ASSERT_PTR_EQ(sp->ptr, result2);
         ASSERT_PTR_EQ(sp->ptr, result3);
         ASSERT_EQ(4, block->ptr->ref_count);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -184,7 +184,7 @@ void test_rc_retain_after_release() {
         sp_ptr_t sp = alloc->alloc(ptr, 10);
         ASSERT_PTR_NOT_NULL(sp);
 
-        const void* result1 = alloc->retain(sp);
+        const void* result1 = alloc->retain(&sp);
         ASSERT_PTR_EQ(sp->ptr, result1);
 
         mem_block_t* block = (mem_block_t*)ptr->block_list;
@@ -194,11 +194,11 @@ void test_rc_retain_after_release() {
         alloc->release(&sp);
         ASSERT_EQ(1, block->ptr->ref_count);
 
-        const void* result2 = alloc->retain(sp);
+        const void* result2 = alloc->retain(&sp);
         ASSERT_PTR_EQ(sp->ptr, result2);
         ASSERT_EQ(2, block->ptr->ref_count);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -219,7 +219,7 @@ void test_basic_allocation() {
             ASSERT_PTR_NOT_NULL(str->ptr);
         }
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -234,10 +234,10 @@ void test_retain_increment_reference_count() {
         sp_ptr_t str = alloc->alloc(ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
-        char* str2 = alloc->retain(str);
+        char* str2 = alloc->retain(&str);
         ASSERT_PTR_NOT_NULL(str2);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -252,7 +252,7 @@ void test_release_one_reference() {
         sp_ptr_t str = alloc->alloc(ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
-        char* str2 = alloc->retain(str);
+        char* str2 = alloc->retain(&str);
         ASSERT_PTR_NOT_NULL(str2);
 
         alloc->release(&str);
@@ -262,7 +262,7 @@ void test_release_one_reference() {
         ASSERT(allocator->block_list != NULL);
         ASSERT_PTR_NULL(allocator->block_list->prev);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -277,7 +277,7 @@ void test_allocate_more_memory() {
         sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        int* numbers_ptr = (int*)alloc->retain(numbers);
+        int* numbers_ptr = (int*)alloc->retain(&numbers);
         for (int i = 0; i < 5; i++) {
             numbers_ptr[i] = i * 10;
         }
@@ -285,7 +285,7 @@ void test_allocate_more_memory() {
             ASSERT_EQ(i * 10, numbers_ptr[i]);
         }
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -300,17 +300,17 @@ void test_retain_array() {
         sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        int* numbers1 = alloc->retain(numbers);
+        int* numbers1 = alloc->retain(&numbers);
         for (int i = 0; i < 5; i++) {
             numbers1[i] = i * 10;
         }
-        int* numbers2 = alloc->retain(numbers);
+        int* numbers2 = alloc->retain(&numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
         for (int i = 0; i < 5; i++) {
             ASSERT_EQ(i * 10, numbers2[i]);
         }
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -325,13 +325,13 @@ void test_release_all_references_to_string() {
         sp_ptr_t str = alloc->alloc(ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
-        char* str2 = alloc->retain(str);
+        char* str2 = alloc->retain(&str);
         ASSERT_PTR_NOT_NULL(str2);
 
         alloc->release(&str);
         alloc->release(&str);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_NULL(ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -346,11 +346,11 @@ void test_release_one_reference_to_array() {
         sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        int* numbers2 = alloc->retain(numbers);
+        int* numbers2 = alloc->retain(&numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
         alloc->release(&numbers);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -365,7 +365,7 @@ void test_release_final_reference_to_array() {
         sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        int* numbers2 = alloc->retain(numbers);
+        int* numbers2 = alloc->retain(&numbers);
         ASSERT_PTR_NOT_NULL(numbers2);
 
         alloc->release(&numbers);
@@ -376,7 +376,7 @@ void test_release_final_reference_to_array() {
         ASSERT_EQ(0, allocator->total_blocks);
         ASSERT_PTR_EQ(NULL, allocator->block_list);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -394,7 +394,7 @@ void test_release_already_freed_memory() {
         alloc->release(&str);
         alloc->release(&str);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -406,12 +406,12 @@ void test_rc_gc_no_blocks() {
     TEST(test_rc_gc_no_blocks) {
         allocator_ptr_t ptr = alloc->init();
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         allocator_t* allocator = (allocator_t*)ptr;
         ASSERT_EQ(0, allocator->total_blocks);
         ASSERT_PTR_EQ(NULL, allocator->block_list);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -426,12 +426,12 @@ void test_rc_gc_single_block() {
         sp_ptr_t str = alloc->alloc(ptr, 20);
         ASSERT_PTR_NOT_NULL(str);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         allocator_t* allocator = (allocator_t*)ptr;
         ASSERT_EQ(0, allocator->total_blocks);
         ASSERT_PTR_EQ(NULL, allocator->block_list);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -455,7 +455,7 @@ void test_rc_gc_free_block_1_of_3() {
         ASSERT_EQ(2, ptr->total_blocks);
         ASSERT(ptr->block_list != NULL);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_EQ(0, ptr->total_blocks);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
@@ -464,7 +464,7 @@ void test_rc_gc_free_block_1_of_3() {
         ASSERT_EQ(0, allocator->total_blocks);
         ASSERT_PTR_EQ(NULL, allocator->block_list);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -488,7 +488,7 @@ void test_rc_gc_free_block_2_of_3() {
         ASSERT_EQ(2, ptr->total_blocks);
         ASSERT(ptr->block_list != NULL);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_EQ(0, ptr->total_blocks);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
@@ -497,7 +497,7 @@ void test_rc_gc_free_block_2_of_3() {
         ASSERT_EQ(0, allocator->total_blocks);
         ASSERT_PTR_EQ(NULL, allocator->block_list);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -522,7 +522,7 @@ void test_rc_gc_free_block_3_of_3() {
         ASSERT_EQ(2, ptr->total_blocks);
         ASSERT(ptr->block_list != NULL);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_EQ(0, ptr->total_blocks);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
@@ -531,7 +531,7 @@ void test_rc_gc_free_block_3_of_3() {
         ASSERT_EQ(0, allocator->total_blocks);
         ASSERT_PTR_EQ(NULL, allocator->block_list);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -550,7 +550,7 @@ void test_rc_gc_memory_cleanup() {
         ASSERT_EQ(1, allocator->total_blocks);
         ASSERT(allocator->block_list != NULL);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -569,17 +569,17 @@ void test_rc_gc_free_one_block() {
         ASSERT_PTR_NOT_NULL(str2);
         ASSERT_PTR_NOT_NULL(numbers);
 
-        alloc->retain(str2);
+        alloc->retain(&str2);
         alloc->release(&str2);
         alloc->release(&str2);
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
 
         allocator_t* allocator = (allocator_t*)ptr;
         ASSERT_PTR_NOT_NULL(allocator);
         ASSERT_EQ(0, allocator->total_blocks);
         ASSERT_PTR_EQ(NULL, allocator->block_list);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -615,7 +615,7 @@ void test_double_linked_list_functionality() {
         ASSERT_PTR_EQ(block1, block3->prev);
         ASSERT_PTR_NULL(block3->next);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
@@ -630,12 +630,12 @@ void test_retain_after_release() {
         sp_ptr_t sp = alloc->alloc(ptr, 20);
         ASSERT_PTR_NOT_NULL(sp);
 
-        alloc->retain(sp);
+        alloc->retain(&sp);
         alloc->release(&sp);
         alloc->release(&sp);
-        alloc->retain(sp);
+        alloc->retain(&sp);
 
-        alloc->gc(ptr);
+        alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);

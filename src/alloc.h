@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+#include "api/alloc.h"
+
 typedef struct mem_block {
     struct sp* ptr;
     struct mem_block* next;
@@ -15,13 +17,15 @@ typedef struct allocator {
     int total_blocks;
 } allocator_t;
 
+typedef struct sp* sp_ptr;
+
 typedef struct sp {
+    sp_ptr_t self;
     void* ptr;
     mem_block_t* block;
     allocator_t* allocator;
     size_t size;
     unsigned long ref_count;
-    unsigned long type;
 } sp_t;
 
 #endif // ALLOC_H

@@ -36,9 +36,9 @@ typedef struct bucket_allocator {
 
 static allocator_ptr_t _init(void);
 static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
-static void* _retain(sp_ptr_t ptr);
-static void _release(const sp_ptr_t* sp);
-static void _gc(allocator_ptr_t ptr);
+static void* _retain(const sp_ptr_t* ptr);
+static void _release(const sp_ptr_t* ptr);
+static void _gc(const allocator_ptr_t* ptr);
 static void _destroy(const allocator_ptr_t* ptr);
 
 static alloc_t reference_counting_allocator = {
@@ -153,14 +153,12 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
         _free_to_bucket(bucket_allocator, sp_bucket_index, smart_pointer);
         return NULL;
     }
-
+    smart_pointer->self = (sp_ptr_t)smart_pointer;
     smart_pointer->ref_count = 1;
-    smart_pointer->type = SMART_PTR_TYPE;
     smart_pointer->size = size;
     smart_pointer->ptr = user_ptr;
     smart_pointer->allocator = (allocator_t*)allocator;
     smart_pointer->block = mem_block;
-
     mem_block->ptr = smart_pointer;
     mem_block->next = bucket_allocator->base.block_list;
     mem_block->prev = NULL;
@@ -174,7 +172,7 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
 }
 
 void _release(const sp_ptr_t* sp) {
-    if (!sp || !(*sp) || (*sp)->type != SMART_PTR_TYPE) return;
+    if (!sp || !(*sp) || (*sp)->self != (sp_ptr_t)*sp) return;
     sp_ptr_t* sp_ptr = (sp_ptr_t*)sp;
     sp_t* ptr = (sp_t*)(*sp);
     if (ptr->ref_count == 0) return;
@@ -207,16 +205,16 @@ void _release(const sp_ptr_t* sp) {
     }
 }
 
-void* _retain(sp_ptr_t sp) {
-    if (!sp || sp->type != SMART_PTR_TYPE) return NULL;
-    sp_t* ptr = (sp_t*)sp;
+void* _retain(const sp_ptr_t *sp) {
+    if (!sp || !(*sp) || (*sp)->self != (sp_ptr_t)*sp) return NULL;
+    sp_t* ptr = (sp_t*)*sp;
     ptr->ref_count++;
     return ptr->ptr;
 }
 
-void _gc(allocator_ptr_t ptr) {
-    if (!ptr) return;
-    bucket_allocator_t* allocator = (bucket_allocator_t*)((char*)ptr - offsetof(bucket_allocator_t, base));
+void _gc(const allocator_ptr_t* ptr) {
+    if (!ptr || !(*ptr) || (*ptr)->block_list == NULL || (*ptr)->total_blocks == 0) return;
+    bucket_allocator_t* allocator = (bucket_allocator_t*)((char*)(*ptr) - offsetof(bucket_allocator_t, base));
     mem_block_t* current = allocator->base.block_list;
     while (current) {
         mem_block_t* next = current->next;

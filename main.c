@@ -9,13 +9,13 @@ int main(void) {
     sp_ptr_t str = alloc->alloc(ptr, 20);
     if (str) {
         const char *data = "Hello, world!";
-        char *ptr = (char*)alloc->retain(str);
+        char *ptr = (char*)alloc->retain(&str);
         strcpy(ptr, data);
         printf("Allocated string: %s\n", ptr);
     }
 
     printf("\nRetaining the string...\n");
-    char* str2 = alloc->retain(str);
+    char* str2 = alloc->retain(&str);
     if (str2) {
         printf("Retained string: %s\n", str2);
     }
@@ -26,7 +26,7 @@ int main(void) {
     printf("\nAllocating memory for an array...\n");
     sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
     if (numbers) {
-        int* numbers_ptr = (int*)alloc->retain(numbers);
+        int* numbers_ptr = (int*)alloc->retain(&numbers);
         for (int i = 0; i < 5; i++) {
             numbers_ptr[i] = i * 10;
         }
@@ -38,7 +38,7 @@ int main(void) {
     }
     printf("\nReleasing array...\n");
     alloc->release(&numbers);
-    alloc->gc(ptr);
+    alloc->gc(&ptr);
     alloc->destroy(&ptr);
 
     printf("\nDemo completed!\n");

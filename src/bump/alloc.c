@@ -15,9 +15,9 @@
 
 static allocator_ptr_t _init(void);
 static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
-static void* _retain(sp_ptr_t ptr);
-static void _release(const sp_ptr_t* sp);
-static void _gc(allocator_ptr_t ptr);
+static void* _retain(const sp_ptr_t* ptr);
+static void _release(const sp_ptr_t* ptr);
+static void _gc(const allocator_ptr_t* ptr);
 static void _destroy(const allocator_ptr_t* ptr);
 
 static alloc_t reference_counting_allocator = {
@@ -82,13 +82,13 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
         return NULL;
     }
     allocator_t* _allocator = (allocator_t*)allocator;
+    smart_pointer->self = (sp_ptr_t)smart_pointer;
     smart_pointer->ref_count = 1;
-    smart_pointer->type = SMART_PTR_TYPE;
     smart_pointer->size = size;
     smart_pointer->ptr = ptr;
     smart_pointer->allocator = _allocator;
     smart_pointer->block = block;
-    smart_pointer->block->ptr = smart_pointer;
+    block->ptr = smart_pointer;
     block->next = allocator->block_list;
     block->prev = NULL;
     if (allocator->block_list != NULL) {
@@ -99,15 +99,15 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
     return smart_pointer;
 }
 
-void* _retain(sp_ptr_t sp) {
-    if (!sp || sp->type != SMART_PTR_TYPE) return NULL;
-    struct sp* ptr = (struct sp*)sp;
+void* _retain(const sp_ptr_t* sp) {
+    if (!sp || !(*sp) || (*sp)->self != (sp_ptr_t)*sp) return NULL;
+    sp_t* ptr = (sp_t*)*sp;
     ptr->ref_count++;
     return ptr->ptr;
 }
 
 void _release(const sp_ptr_t* sp) {
-    if (!sp || !(*sp) || (*sp)->type != SMART_PTR_TYPE) return;
+    if (!sp || !(*sp) || (*sp)->self != (sp_ptr_t)*sp) return;
     sp_ptr_t* sp_ptr = (sp_ptr_t*)sp;
     sp_t* ptr = (sp_t*)(*sp);
     ptr->ref_count--;
@@ -132,9 +132,9 @@ void _release(const sp_ptr_t* sp) {
     }
 }
 
-void _gc(allocator_ptr_t ptr) {
-    if (!ptr || ptr->block_list == NULL || ptr->total_blocks == 0) return;
-    allocator_t* allocator = (allocator_t*)ptr;
+void _gc(const allocator_ptr_t* ptr) {
+    if (!ptr || !(*ptr) || (*ptr)->block_list == NULL || (*ptr)->total_blocks == 0) return;
+    allocator_t* allocator = (allocator_t*)(*ptr);
     mem_block_t* current = (mem_block_t*)allocator->block_list;
     while (current) {
         mem_block_t* next = (mem_block_t*)current->next;

@@ -13,9 +13,9 @@ typedef struct alloc
 {
     allocator_ptr_t (*init)(void);
     sp_ptr_t (*alloc)(allocator_ptr_t ptr, size_t size);
-    void* (*retain)(sp_ptr_t ptr);
+    void* (*retain)(const sp_ptr_t* pts);
     void (*release)(const sp_ptr_t* ptr);
-    void (*gc)(allocator_ptr_t ptr);
+    void (*gc)(const allocator_ptr_t* ptr);
     void (*destroy)(const allocator_ptr_t* ptr);
 } alloc_t;
 
