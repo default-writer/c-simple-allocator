@@ -1,7 +1,12 @@
+#if _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <stdio.h>
 #include <string.h>
 
 #include "src/api/alloc.h"
+
 
 int main(void) {
     allocator_ptr_t ptr = alloc->init();
