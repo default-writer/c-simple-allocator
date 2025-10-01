@@ -1,7 +1,3 @@
-#if _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -219,7 +215,8 @@ void test_basic_allocation() {
 
         if (str) {
             const char *data = "Hello, world!";
-            strcpy((char*)(str->ptr), data);
+            char *ptr = (char*)(str->ptr);
+            strncpy_s(ptr, 20, data, 19);
             ASSERT_PTR_NOT_NULL(str->ptr);
         }
 

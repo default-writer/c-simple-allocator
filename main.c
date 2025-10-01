@@ -1,7 +1,3 @@
-#if _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <stdio.h>
 #include <string.h>
 
@@ -15,7 +11,8 @@ int main(void) {
     if (str) {
         const char *data = "Hello, world!";
         char *ptr = (char*)alloc->retain(&str);
-        strcpy(ptr, data);
+        strncpy_s(ptr, 20, data, 20 - 1);
+        ptr[20 - 1] = '\0'; // Ensure null-termination
         printf("Allocated string: %s\n", ptr);
     }
 
