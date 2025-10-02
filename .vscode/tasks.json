@@ -4,7 +4,10 @@
         {
             "label": "clean",
             "type": "shell",
-            "group": "build",
+            "group": {
+                "kind": "none",
+                "isDefault": true
+            },
             "windows": {
                 "command": "ninja",
                 "args": [
@@ -47,9 +50,36 @@
             }
         },
         {
+            "label": "multithread",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "multithread"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "multithread"
+                ]
+            }
+        },
+        {
             "label": "reference_alloc",
             "type": "shell",
-            "group": "test",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "windows": {
                 "command": "ninja",
                 "args": [
@@ -70,7 +100,10 @@
         {
             "label": "bump_alloc",
             "type": "shell",
-            "group": "test",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "windows": {
                 "command": "ninja",
                 "args": [
@@ -91,7 +124,10 @@
         {
             "label": "bucket_alloc",
             "type": "shell",
-            "group": "test",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "windows": {
                 "command": "ninja",
                 "args": [
