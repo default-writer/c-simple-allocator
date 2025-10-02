@@ -150,7 +150,7 @@ void _gc(const allocator_ptr_t* ptr) {
 }
 
 void _destroy(const allocator_ptr_t* ptr) {
-    if (ptr == NULL || *ptr == NULL) return;
+    if (!ptr || !(*ptr)) return;
     allocator_ptr_t* allocator_ptr = (allocator_ptr_t*)ptr;
     //allocator_t* allocator = (allocator_t*)*ptr;
     *allocator_ptr = NULL;
