@@ -81,6 +81,14 @@ void setup_console() {
         } \
     } while (0)
 
+#define ASSERT_PTR_NOT_EQ(expected, actual) \
+do { \
+    if ((expected) == (actual)) { \
+        printf("  Assertion failed at %s:%d: Expected %p, got %p\n", __FILE__, __LINE__, (expected), (actual)); \
+        passed = 0; \
+    } \
+} while (0)
+
 #define ASSERT_PTR_NULL(actual) \
     do { \
         if (NULL != (actual)) { \
@@ -106,7 +114,7 @@ void test_rc_retain_null_pointer() {
 
         alloc->gc(&ptr);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -130,7 +138,7 @@ void test_rc_retain_valid_pointer_in_allocator() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -149,7 +157,7 @@ void test_rc_retain_valid_pointer_not_in_allocator() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -177,7 +185,7 @@ void test_rc_retain_multiple_retains() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -206,7 +214,41 @@ void test_rc_retain_after_release() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
+    } END_TEST;
+}
+
+void test_basic_allocation_adter_gc() {
+    TEST(test_basic_allocation) {
+        allocator_ptr_t ptr = alloc->init();
+
+        alloc->gc(&ptr);
+        sp_ptr_t str = alloc->alloc(&ptr, 20);
+        ASSERT_PTR_NOT_NULL(str);
+
+        if (str) {
+            const char *data = "Hello, world!";
+            char *ptr = (char*)(str->ptr);
+            strncpy_s(ptr, 20, data, 19);
+            ASSERT_PTR_NOT_NULL(str->ptr);
+        }
+        
+        ASSERT_PTR_NOT_NULL(ptr);
+        ASSERT_PTR_NOT_EQ(NULL,  ptr->block_list);
+        ASSERT_EQ(1, ptr->total_blocks);
+        alloc->destroy(&ptr);
+        ASSERT_PTR_NULL(ptr);
+    } END_TEST;
+}
+
+void test_basic_allocation_adter_destroy() {
+    TEST(test_basic_allocation) {
+        allocator_ptr_t ptr = alloc->init();
+
+        alloc->destroy(&ptr);
+        sp_ptr_t str = alloc->alloc(&ptr, 20);
+        ASSERT_PTR_NULL(str);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -228,7 +270,7 @@ void test_basic_allocation() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -246,7 +288,7 @@ void test_retain_increment_reference_count() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -263,7 +305,7 @@ void test_release_one_reference() {
         allocator_t* allocator = (allocator_t*)ptr;
         ASSERT_PTR_NOT_NULL(allocator);
         ASSERT_EQ(1, allocator->total_blocks);
-        ASSERT(allocator->block_list != NULL);
+        ASSERT_PTR_NOT_EQ(NULL, allocator->block_list);
         ASSERT_PTR_NULL(allocator->block_list->prev);
 
         alloc->gc(&ptr);
@@ -271,7 +313,7 @@ void test_release_one_reference() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -294,7 +336,7 @@ void test_allocate_more_memory() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -319,7 +361,7 @@ void test_retain_array() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -340,7 +382,7 @@ void test_release_all_references_to_string() {
         ASSERT_PTR_NULL(ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -359,7 +401,7 @@ void test_release_one_reference_to_array() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -385,7 +427,7 @@ void test_release_final_reference_to_array() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -403,7 +445,7 @@ void test_release_already_freed_memory() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 void test_rc_gc_no_blocks() {
@@ -420,7 +462,7 @@ void test_rc_gc_no_blocks() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -440,7 +482,7 @@ void test_rc_gc_single_block() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -457,7 +499,7 @@ void test_rc_gc_free_block_1_of_3() {
 
         alloc->release(&str1);
         ASSERT_EQ(2, ptr->total_blocks);
-        ASSERT(ptr->block_list != NULL);
+        ASSERT_PTR_NOT_EQ(NULL, ptr->block_list);
 
         alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
@@ -473,7 +515,7 @@ void test_rc_gc_free_block_1_of_3() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -490,7 +532,7 @@ void test_rc_gc_free_block_2_of_3() {
 
         alloc->release(&str2);
         ASSERT_EQ(2, ptr->total_blocks);
-        ASSERT(ptr->block_list != NULL);
+        ASSERT_PTR_NOT_EQ(NULL, ptr->block_list);
 
         alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
@@ -506,7 +548,7 @@ void test_rc_gc_free_block_2_of_3() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -524,7 +566,7 @@ void test_rc_gc_free_block_3_of_3() {
 
         alloc->release(&numbers);
         ASSERT_EQ(2, ptr->total_blocks);
-        ASSERT(ptr->block_list != NULL);
+        ASSERT_PTR_NOT_EQ(NULL, ptr->block_list);
 
         alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
@@ -540,7 +582,7 @@ void test_rc_gc_free_block_3_of_3() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -552,14 +594,14 @@ void test_rc_gc_memory_cleanup() {
 
         allocator_t* allocator = (allocator_t*)ptr;
         ASSERT_EQ(1, allocator->total_blocks);
-        ASSERT(allocator->block_list != NULL);
+        ASSERT_PTR_NOT_EQ(NULL, allocator->block_list);
 
         alloc->gc(&ptr);
         ASSERT_PTR_NOT_NULL(ptr);
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -588,7 +630,7 @@ void test_rc_gc_free_one_block() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -624,7 +666,7 @@ void test_double_linked_list_functionality() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -644,7 +686,7 @@ void test_retain_after_release() {
         ASSERT_PTR_EQ(NULL, ptr->block_list);
         ASSERT_EQ(0, ptr->total_blocks);
         alloc->destroy(&ptr);
-        ASSERT_PTR_EQ(NULL, ptr);
+        ASSERT_PTR_NULL(ptr);
     } END_TEST;
 }
 
@@ -657,6 +699,8 @@ int main() {
     test_rc_retain_valid_pointer_not_in_allocator();
     test_rc_retain_multiple_retains();
     test_rc_retain_after_release();
+    test_basic_allocation_adter_gc();
+    test_basic_allocation_adter_destroy();
     test_basic_allocation();
     test_retain_increment_reference_count();
     test_release_one_reference();
