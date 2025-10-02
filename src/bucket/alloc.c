@@ -238,8 +238,7 @@ void _gc(const allocator_ptr_t* ptr) {
 }
 
 void _destroy(const allocator_ptr_t* ptr) {
-    if (ptr == NULL || *ptr == NULL) return;
-    
+    if (!ptr || !(*ptr)) return;
     bucket_allocator_t* allocator = (bucket_allocator_t*)((char*)*ptr - offsetof(bucket_allocator_t, base));
 #ifdef _WIN32
     VirtualFree(allocator->memory_block, 0, MEM_RELEASE);
