@@ -241,7 +241,7 @@ void test_basic_allocation_adter_gc() {
     } END_TEST;
 }
 
-void test_basic_allocation_adter_destroy() {
+void test_basic_allocation_after_destroy() {
     TEST(test_basic_allocation) {
         allocator_ptr_t ptr = alloc->init();
 
@@ -700,7 +700,7 @@ int main() {
     test_rc_retain_multiple_retains();
     test_rc_retain_after_release();
     test_basic_allocation_adter_gc();
-    test_basic_allocation_adter_destroy();
+    test_basic_allocation_after_destroy();
     test_basic_allocation();
     test_retain_increment_reference_count();
     test_release_one_reference();
