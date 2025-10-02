@@ -17,6 +17,7 @@ rule link
 
 # Build statements for object files
 build main.o: cc examples/main.c
+build multithread.o: cc examples/multithread.c
 build test.o: cc tests/test.c
 build reference_alloc.o: cc src/reference/alloc.c
 build bump_alloc.o: cc src/bump/alloc.c
@@ -24,12 +25,13 @@ build bucket_alloc.o: cc src/bucket/alloc.c
 
 # Build statement for the executable
 build main: link main.o reference_alloc.o
+build multithread: link multithread.o reference_alloc.o
 build reference_alloc: link test.o reference_alloc.o
 build bump_alloc: link test.o bump_alloc.o
 build bucket_alloc: link test.o bucket_alloc.o
 
 # Default target
-default main
+default main multithread
 
 # Clean rule
 rule clean
