@@ -1,9 +1,10 @@
-/.ninja_log
+.history/
 .tools/
 **/*.o
 **/*.obj
 **/*.pdb
 **/*.exe
+/.ninja_log
 /main
 /bump_alloc
 /bucket_alloc

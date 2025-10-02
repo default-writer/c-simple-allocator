@@ -4,9 +4,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#define strncpy_s(dest, destsz, src, count) strncpy_s(dest, destsz, src, count)
+#define strncpy_s(dest, dest_size, src, count) strncpy_s(dest, dest_size, src, count)
 #else
-#define strncpy_s(dest, destsz, src, count) strncpy(dest, src, count); (dest)[(destsz)-1] = '\0';
+#define strncpy_s(dest, dest_size, src, count) strncpy(dest, src, count); (dest)[(dest_size)-1] = '\0';
 #endif
 
 #include "../src/api/alloc.h"
@@ -218,7 +218,7 @@ void test_rc_retain_after_release() {
     } END_TEST;
 }
 
-void test_basic_allocation_adter_gc() {
+void test_basic_allocation_after_gc() {
     TEST(test_basic_allocation) {
         allocator_ptr_t ptr = alloc->init();
 
@@ -699,7 +699,7 @@ int main() {
     test_rc_retain_valid_pointer_not_in_allocator();
     test_rc_retain_multiple_retains();
     test_rc_retain_after_release();
-    test_basic_allocation_adter_gc();
+    test_basic_allocation_after_gc();
     test_basic_allocation_after_destroy();
     test_basic_allocation();
     test_retain_increment_reference_count();

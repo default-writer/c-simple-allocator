@@ -4,9 +4,9 @@
 #include "../src/api/alloc.h"
 
 #ifdef _WIN32
-#define strncpy_s(dest, destsz, src, count) strncpy_s(dest, destsz, src, count)
+#define strncpy_s(dest, dest_size, src, count) strncpy_s(dest, dest_size, src, count)
 #else
-#define strncpy_s(dest, destsz, src, count) strncpy(dest, src, count); (dest)[(destsz)-1] = '\0';
+#define strncpy_s(dest, dest_size, src, count) strncpy(dest, src, count); (dest)[(dest_size)-1] = '\0';
 #endif
 
 int main(void) {
