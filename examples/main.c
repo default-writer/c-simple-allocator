@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "src/api/alloc.h"
+#include "../src/api/alloc.h"
 
 #ifdef _WIN32
 #define strncpy_s(dest, destsz, src, count) strncpy_s(dest, destsz, src, count)
@@ -12,7 +12,7 @@
 int main(void) {
     allocator_ptr_t ptr = alloc->init();
     printf("Allocating memory for a string...\n");
-    sp_ptr_t str = alloc->alloc(ptr, 20);
+    sp_ptr_t str = alloc->alloc(&ptr, 20);
     if (str) {
         const char *data = "Hello, world!";
         char *ptr = (char*)alloc->retain(&str);
@@ -31,7 +31,7 @@ int main(void) {
     printf("\nReleasing final reference...\n");
     alloc->release(&str);
     printf("\nAllocating memory for an array...\n");
-    sp_ptr_t numbers = alloc->alloc(ptr, sizeof(int) * 5);
+    sp_ptr_t numbers = alloc->alloc(&ptr, sizeof(int) * 5);
     if (numbers) {
         int* numbers_ptr = (int*)alloc->retain(&numbers);
         for (int i = 0; i < 5; i++) {

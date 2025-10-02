@@ -14,7 +14,7 @@
 #include "../alloc.h"
 
 static allocator_ptr_t _init(void);
-static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
+static sp_ptr_t _alloc(const allocator_ptr_t* ptr, size_t size);
 static void* _retain(const sp_ptr_t* ptr);
 static void _release(const sp_ptr_t* ptr);
 static void _gc(const allocator_ptr_t* ptr);
@@ -65,9 +65,10 @@ allocator_ptr_t _init(void) {
     return allocator;
 }
 
-sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
-    void* ptr = _malloc(size);
-    if (!ptr) {
+sp_ptr_t _alloc(const allocator_ptr_t* ptr, size_t size) {
+    if (!ptr || !(*ptr)) return NULL;
+    void* _ptr = _malloc(size);
+    if (!_ptr) {
         return NULL;
     }
     mem_block_t* block = _malloc(sizeof(mem_block_t));
@@ -81,18 +82,18 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
         // free(block); // Cannot free from bump allocator
         return NULL;
     }
-    allocator_t* _allocator = (allocator_t*)allocator;
+    allocator_t* _allocator = (allocator_t*)(*ptr);
     smart_pointer->self = (sp_ptr_t)smart_pointer;
     smart_pointer->ref_count = 1;
     smart_pointer->size = size;
-    smart_pointer->ptr = ptr;
+    smart_pointer->ptr = _ptr;
     smart_pointer->allocator = _allocator;
     smart_pointer->block = block;
     block->ptr = smart_pointer;
-    block->next = allocator->block_list;
+    block->next = (*ptr)->block_list;
     block->prev = NULL;
-    if (allocator->block_list != NULL) {
-        allocator->block_list->prev = block;
+    if ((*ptr)->block_list != NULL) {
+        (*ptr)->block_list->prev = block;
     }
     _allocator->block_list = block;
     _allocator->total_blocks++;

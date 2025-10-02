@@ -16,8 +16,8 @@ rule link
   description = Linking $out
 
 # Build statements for object files
-build main.obj: cc main.c
-build test.obj: cc test.c
+build main.obj: cc examples/main.c
+build test.obj: cc tests/test.c
 build reference_alloc.obj: cc src/reference/alloc.c
 build bump_alloc.obj: cc src/bump/alloc.c
 build bucket_alloc.obj: cc src/bucket/alloc.c

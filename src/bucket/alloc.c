@@ -35,7 +35,7 @@ typedef struct bucket_allocator {
 } bucket_allocator_t;
 
 static allocator_ptr_t _init(void);
-static sp_ptr_t _alloc(allocator_ptr_t ptr, size_t size);
+static sp_ptr_t _alloc(const allocator_ptr_t* ptr, size_t size);
 static void* _retain(const sp_ptr_t* ptr);
 static void _release(const sp_ptr_t* ptr);
 static void _gc(const allocator_ptr_t* ptr);
@@ -126,8 +126,9 @@ allocator_ptr_t _init(void) {
     return (allocator_ptr_t)&allocator->base;
 }
 
-sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
-    bucket_allocator_t* bucket_allocator = (bucket_allocator_t*)((char*)allocator - offsetof(bucket_allocator_t, base));
+sp_ptr_t _alloc(const allocator_ptr_t* ptr, size_t size) {
+    if (!ptr || !(*ptr)) return NULL;
+    bucket_allocator_t* bucket_allocator = (bucket_allocator_t*)((char*)(*ptr) - offsetof(bucket_allocator_t, base));
     
     int user_bucket_index = find_bucket_index(size);
     if (user_bucket_index == -1) return NULL;
@@ -157,7 +158,7 @@ sp_ptr_t _alloc(allocator_ptr_t allocator, size_t size) {
     smart_pointer->ref_count = 1;
     smart_pointer->size = size;
     smart_pointer->ptr = user_ptr;
-    smart_pointer->allocator = (allocator_t*)allocator;
+    smart_pointer->allocator = (allocator_t*)(*ptr);
     smart_pointer->block = mem_block;
     mem_block->ptr = smart_pointer;
     mem_block->next = bucket_allocator->base.block_list;
