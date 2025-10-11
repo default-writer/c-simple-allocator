@@ -26,7 +26,7 @@
             }
         },
         {
-            "label": "main",
+            "label": "examples_main",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -37,7 +37,7 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "main"
+                    "examples_main"
                 ]
             },
             "linux": {
@@ -45,12 +45,12 @@
                 "args": [
                     "-f",
                     "build.linux.ninja",
-                    "main"
+                    "examples_main"
                 ]
             }
         },
         {
-            "label": "multithread",
+            "label": "examples_thread",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -61,7 +61,7 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "multithread"
+                    "examples_thread"
                 ]
             },
             "linux": {
@@ -69,12 +69,12 @@
                 "args": [
                     "-f",
                     "build.linux.ninja",
-                    "multithread"
+                    "examples_thread"
                 ]
             }
         },
         {
-            "label": "reference_alloc",
+            "label": "test_alloc",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -85,7 +85,7 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "reference_alloc"
+                    "test_alloc"
                 ]
             },
             "linux": {
@@ -93,12 +93,12 @@
                 "args": [
                     "-f",
                     "build.linux.ninja",
-                    "reference_alloc"
+                    "test_alloc"
                 ]
             }
         },
         {
-            "label": "bump_alloc",
+            "label": "test_bump_alloc",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -109,7 +109,7 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "bump_alloc"
+                    "test_bump_alloc"
                 ]
             },
             "linux": {
@@ -117,12 +117,12 @@
                 "args": [
                     "-f",
                     "build.linux.ninja",
-                    "bump_alloc"
+                    "test_bump_alloc"
                 ]
             }
         },
         {
-            "label": "bucket_alloc",
+            "label": "test_bucket_alloc",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -133,7 +133,7 @@
                 "args": [
                     "-f",
                     "build.windows.ninja",
-                    "bucket_alloc"
+                    "test_bucket_alloc"
                 ]
             },
             "linux": {
@@ -141,7 +141,7 @@
                 "args": [
                     "-f",
                     "build.linux.ninja",
-                    "bucket_alloc"
+                    "test_bucket_alloc"
                 ]
             }
         }

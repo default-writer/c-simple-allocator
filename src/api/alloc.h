@@ -3,8 +3,6 @@
 
 #include <stdlib.h>
 
-#define SMART_PTR_TYPE 1
-
 typedef const struct sp* sp_ptr_t;
 typedef const struct allocator* allocator_ptr_t;
 typedef const struct alloc* alloc_ptr_t;

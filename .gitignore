@@ -9,4 +9,7 @@
 /bump_alloc
 /bucket_alloc
 /reference_alloc
-/multithread
+/examples_*
+/main_*
+/test_*
+
