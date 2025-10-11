@@ -19,11 +19,13 @@ typedef struct thread_sp {
 static thread_sp_ptr_t _create(thread_func_ptr_t func, int thread_num);
 static void _start(const thread_sp_ptr_t* ptr);
 static void _join(const thread_sp_ptr_t* ptr);
+static void _destroy(const thread_sp_ptr_t* ptr);
 
 static thread_t reference_thread = {
     .create = _create,
     .start = _start,
-    .join = _join
+    .join = _join,
+    .destroy = _destroy
 };
 
 thread_ptr_t thread = &reference_thread;
@@ -52,9 +54,11 @@ void _start(const thread_sp_ptr_t* ptr) {
 #ifdef _WIN32
         sp->hThreads[i] = CreateThread(NULL, 0, (thread_func_ptr_t)sp->func, &sp->allocator, 0, NULL);
         if (sp->hThreads[i] == NULL) {
+            _destroy(ptr);
         }
 #else
         if (pthread_create(&sp->hThreads[i], NULL, sp->func, &sp->allocator)) {
+            _destroy(ptr);
         }
 #endif
     }
@@ -63,7 +67,6 @@ void _start(const thread_sp_ptr_t* ptr) {
 void _join(const thread_sp_ptr_t* ptr) {
     if (!ptr || !*ptr) return;
     thread_sp_t* sp = (thread_sp_t*)*ptr;
-    thread_sp_ptr_t* _ptr = (thread_sp_ptr_t*)ptr;
 #ifdef _WIN32
     WaitForMultipleObjects(sp->thread_num, sp->hThreads, TRUE, INFINITE);
     for (int i = 0; i < sp->thread_num; i++) {
@@ -74,6 +77,12 @@ void _join(const thread_sp_ptr_t* ptr) {
         pthread_join(sp->hThreads[i], NULL);
     }
 #endif
+}
+
+void _destroy(const thread_sp_ptr_t* ptr) {
+    if (!ptr || !*ptr) return;
+    thread_sp_t* sp = (thread_sp_t*)*ptr;
+    thread_sp_ptr_t* _ptr = (thread_sp_ptr_t*)ptr;
     allocator_ptr_t _allocator = sp->allocator;
     alloc->gc(&_allocator);
     alloc->destroy(&_allocator);

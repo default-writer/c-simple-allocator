@@ -31,6 +31,7 @@ int main() {
     thread_sp_ptr_t _ptr = thread->create(thread_func, NUM_THREADS);
     thread->start(&_ptr);
     thread->join(&_ptr);
+    thread->destroy(&_ptr);
     printf("\nmulti-threaded demo completed!\n");
     return 0;
 }
