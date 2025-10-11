@@ -725,10 +725,10 @@ int main() {
     printf("tests run: %d\n", tests_run);
     printf("tests passed: %d\n", tests_passed);
     if (tests_run == tests_passed) {
-        printf("all tests %sPASSED!%s\n", GREEN, RESET);
+        printf("all tests %sPASSED%s\n", GREEN, RESET);
         return 0;
     } else {
-        printf("some tests %sFAILED!%s\n", RED, RESET);
+        printf("some tests %sFAILED%s\n", RED, RESET);
         return 1;
     }
 }
