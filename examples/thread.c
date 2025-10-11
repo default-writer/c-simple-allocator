@@ -12,7 +12,7 @@ thread_func_result thread_func(void* param) {
     sp_ptr_t mem;
     if (!_ptr || !_ptr || !(mem = alloc->alloc(_ptr, ALLOC_SIZE))) {
         printf("thread %lu: failed to allocate memory.\n", get_thread_id());
-        return 1;
+        return (thread_func_result)1;
     }
     printf("thread 0x%lu: allocated %d bytes.\n", get_thread_id(), ALLOC_SIZE);
     char* data = (char*)alloc->retain(&mem);
