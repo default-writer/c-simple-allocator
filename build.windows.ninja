@@ -16,22 +16,23 @@ rule link
   description = Linking $out
 
 # Build statements for object files
-build main.obj: cc examples/main.c
-build multithread.obj: cc examples/multithread.c
+build examples_main.obj: cc examples/main.c
+build examples_thread.obj: cc examples/thread.c
 build test.obj: cc tests/test.c
-build reference_alloc.obj: cc src/reference/alloc.c
-build bump_alloc.obj: cc src/bump/alloc.c
-build bucket_alloc.obj: cc src/bucket/alloc.c
+build alloc.obj: cc src/reference/alloc.c
+build thread.obj: cc src/thread/thread.c
+build bump.obj: cc src/bump/alloc.c
+build bucket.obj: cc src/bucket/alloc.c
 
 # Build statement for the executable
-build main: link main.obj reference_alloc.obj
-build multithread: link multithread.obj reference_alloc.obj
-build reference_alloc: link test.obj reference_alloc.obj
-build bump_alloc: link test.obj bump_alloc.obj
-build bucket_alloc: link test.obj bucket_alloc.obj
+build examples_main: link examples_main.obj alloc.obj
+build examples_thread: link examples_thread.obj thread.obj alloc.obj
+build test_alloc: link test.obj alloc.obj
+build test_bump_alloc: link test.obj bump.obj
+build test_bucket_alloc: link test.obj bucket.obj
 
 # Default target
-default main
+default examples_main examples_thread
 
 # Clean rule
 rule clean
