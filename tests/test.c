@@ -43,7 +43,7 @@ void setup_console() {
 #define TEST(name) \
     do { \
         tests_run++; \
-        printf("Running test: %s...", #name); \
+        printf("running test: %s...", #name); \
         int passed = 1; \
         do
 
@@ -60,7 +60,7 @@ void setup_console() {
 #define ASSERT(condition) \
     do { \
         if (!(condition)) { \
-            printf("  Assertion failed at %s:%d: %s\n", __FILE__, __LINE__, #condition); \
+            printf("  assertion failed at %s:%d: %s\n", __FILE__, __LINE__, #condition); \
             passed = 0; \
         } \
     } while (0)
@@ -68,7 +68,7 @@ void setup_console() {
 #define ASSERT_EQ(expected, actual) \
     do { \
         if ((expected) != (actual)) { \
-            printf("  Assertion failed at %s:%d: Expected %ld, got %ld\n", __FILE__, __LINE__, (long)(expected), (long)(actual)); \
+            printf("  assertion failed at %s:%d: Expected %ld, got %ld\n", __FILE__, __LINE__, (long)(expected), (long)(actual)); \
             passed = 0; \
         } \
     } while (0)
@@ -76,7 +76,7 @@ void setup_console() {
 #define ASSERT_PTR_EQ(expected, actual) \
     do { \
         if ((expected) != (actual)) { \
-            printf("  Assertion failed at %s:%d: Expected %p, got %p\n", __FILE__, __LINE__, (expected), (actual)); \
+            printf("  assertion failed at %s:%d: Expected %p, got %p\n", __FILE__, __LINE__, (expected), (actual)); \
             passed = 0; \
         } \
     } while (0)
@@ -84,7 +84,7 @@ void setup_console() {
 #define ASSERT_PTR_NOT_EQ(expected, actual) \
 do { \
     if ((expected) == (actual)) { \
-        printf("  Assertion failed at %s:%d: Expected %p, got %p\n", __FILE__, __LINE__, (expected), (actual)); \
+        printf("  assertion failed at %s:%d: Expected %p, got %p\n", __FILE__, __LINE__, (expected), (actual)); \
         passed = 0; \
     } \
 } while (0)
@@ -92,7 +92,7 @@ do { \
 #define ASSERT_PTR_NULL(actual) \
     do { \
         if (NULL != (actual)) { \
-            printf("  Assertion failed at %s:%d: Expected NULL, got %p\n", __FILE__, __LINE__, (actual)); \
+            printf("  assertion failed at %s:%d: Expected NULL, got %p\n", __FILE__, __LINE__, (actual)); \
             passed = 0; \
         } \
     } while (0)
@@ -100,7 +100,7 @@ do { \
 #define ASSERT_PTR_NOT_NULL(actual) \
     do { \
         if (NULL == (actual)) { \
-            printf("  Assertion failed at %s:%d: Expected non-NULL, got NULL\n", __FILE__, __LINE__); \
+            printf("  assertion failed at %s:%d: Expected non-NULL, got NULL\n", __FILE__, __LINE__); \
             passed = 0; \
         } \
     } while (0)
@@ -692,7 +692,7 @@ void test_retain_after_release() {
 
 int main() {
     setup_console();
-    printf("Running unit tests for reference counting allocator\n");
+    printf("running unit tests for reference counting allocator\n");
     printf("==========================================\n\n");
     test_rc_retain_null_pointer();
     test_rc_retain_valid_pointer_in_allocator();
@@ -722,13 +722,13 @@ int main() {
     test_retain_after_release();
 
     printf("\n==========================================\n");
-    printf("Tests run: %d\n", tests_run);
-    printf("Tests passed: %d\n", tests_passed);
+    printf("tests run: %d\n", tests_run);
+    printf("tests passed: %d\n", tests_passed);
     if (tests_run == tests_passed) {
-        printf("%sAll tests PASSED!%s\n", GREEN, RESET);
+        printf("%s - all tests PASSED!%s\n", GREEN, RESET);
         return 0;
     } else {
-        printf("%sSome tests FAILED!%s\n", RED, RESET);
+        printf("%s - some tests FAILED!%s\n", RED, RESET);
         return 1;
     }
 }

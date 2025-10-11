@@ -34,7 +34,7 @@ thread_sp_ptr_t _create(thread_func_ptr_t func, int thread_num) {
     if (!sp) {
         return NULL;
     }
-    sp->hThreads = (handle_ptr_t)malloc(sizeof(pthread_t) * thread_num);
+    sp->hThreads = (handle_ptr_t)malloc(sizeof(handle_t) * thread_num);
     if (!sp->hThreads) {
         free(sp);
         return NULL;
@@ -50,7 +50,7 @@ void _start(const thread_sp_ptr_t* ptr) {
     thread_sp_t* sp = (thread_sp_t*)*ptr;
     for (int i = 0; i < sp->thread_num; i++) {
 #ifdef _WIN32
-        sp->hThreads[i] = CreateThread(NULL, 0, sp->func, &sp->allocator, 0, NULL);
+        sp->hThreads[i] = CreateThread(NULL, 0, (thread_func_ptr_t)sp->func, &sp->allocator, 0, NULL);
         if (sp->hThreads[i] == NULL) {
         }
 #else

@@ -4,12 +4,6 @@
 
 #define MEMORY_SIZE (4096 * 100) // 400KB initial memory block
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <sys/mman.h>
-#endif
-
 #include "../api/alloc.h"
 #include "../alloc.h"
 

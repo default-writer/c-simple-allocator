@@ -3,6 +3,13 @@
 
 #include <stdlib.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/mman.h>
+#include <pthread.h>
+#endif
+
 typedef const struct sp* sp_ptr_t;
 typedef const struct allocator* allocator_ptr_t;
 typedef const struct alloc* alloc_ptr_t;
