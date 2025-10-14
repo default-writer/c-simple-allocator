@@ -3,58 +3,72 @@
     "configurations": [
         {
             "program": "",
-            "name": "main",
+            "name": "examples_main",
             "type": "lldb-dap",
             "request": "launch",
-            "preLaunchTask": "main",
+            "preLaunchTask": "examples_main",
             "cwd": "${workspaceFolder}",
             "windows": {
-                "program": "${workspaceFolder}/main.exe"
+                "program": "${workspaceFolder}/examples_main.exe"
             },
             "linux": {
-                "program": "${workspaceFolder}/main"
+                "program": "${workspaceFolder}/examples_main"
             }
         },
         {
             "program": "",
-            "name": "reference_alloc",
+            "name": "examples_thread",
             "type": "lldb-dap",
             "request": "launch",
-            "preLaunchTask": "reference_alloc",
+            "preLaunchTask": "examples_thread",
             "cwd": "${workspaceFolder}",
             "windows": {
-                "program": "${workspaceFolder}/reference_alloc.exe"
+                "program": "${workspaceFolder}/examples_thread.exe"
             },
             "linux": {
-                "program": "${workspaceFolder}/reference_alloc"
+                "program": "${workspaceFolder}/examples_thread"
+            }
+        },
+        {
+            "program": "",
+            "name": "test_alloc",
+            "type": "lldb-dap",
+            "request": "launch",
+            "preLaunchTask": "test_alloc",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "program": "${workspaceFolder}/test_alloc.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/test_alloc"
             },
         },
         {
             "program": "",
-            "name": "bump_alloc",
+            "name": "test_bump_alloc",
             "type": "lldb-dap",
             "request": "launch",
-            "preLaunchTask": "bump_alloc",
+            "preLaunchTask": "test_bump_alloc",
             "cwd": "${workspaceFolder}",
             "windows": {
-                "program": "${workspaceFolder}/bump_alloc.exe"
+                "program": "${workspaceFolder}/test_bump_alloc.exe"
             },
             "linux": {
-                "program": "${workspaceFolder}/bump_alloc"
+                "program": "${workspaceFolder}/test_bump_alloc"
             },
         },
         {
             "program": "",
-            "name": "bucket_alloc",
+            "name": "test_bucket_alloc",
             "type": "lldb-dap",
             "request": "launch",
-            "preLaunchTask": "bucket_alloc",
+            "preLaunchTask": "test_bucket_alloc",
             "cwd": "${workspaceFolder}",
             "windows": {
-                "program": "${workspaceFolder}/bucket_alloc.exe"
+                "program": "${workspaceFolder}/test_bucket_alloc.exe"
             },
             "linux": {
-                "program": "${workspaceFolder}/bucket_alloc"
+                "program": "${workspaceFolder}/test_bucket_alloc"
             },
         }
     ]

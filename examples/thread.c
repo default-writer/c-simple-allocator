@@ -3,7 +3,7 @@
 #include "../src/api/alloc.h"
 #include "../src/api/thread.h"
 
-#define NUM_THREADS 4
+#define NUM_THREADS 16
 #define ALLOC_SIZE 1024
 
 thread_func_result thread_func(void* param) {
