@@ -4,6 +4,9 @@
         "llvm-vs-code-extensions.lldb-dap",
         "google.geminicodeassist",
         "daylerees.rainglow",
-        "batyan-soft.fast-tasks"
+        "batyan-soft.fast-tasks",
+        "github.vscode-github-actions",
+        "github.codespaces",
+        "github.vscode-pull-request-github"
     ]
 }
