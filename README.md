@@ -23,6 +23,12 @@ This template provides a ready-to-use development environment for C++ projects o
     *   Pre-configured `test` task.
     *   Pre-configured `debug` launch configuration.
 
+## Prereqisites
+
+- Linux/Debian
+```bash
+sudo apt install lld -y
+```
 ## Environment Setup
 
 - Linux/Debian:

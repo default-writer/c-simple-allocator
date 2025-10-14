@@ -37,8 +37,20 @@ if [[ ! -f "$TOOLS_DIR/llvm/clang" ]]; then
   sudo ln -s /usr/bin/clang-21 $TOOLS_DIR/llvm/clang
 fi
 
-NINJA_VERSION="1.11.1"
-NINJA_ZIP="ninja-linux.zip"
+NINJA_VERSION="1.13.1"
+
+ARCH=$(uname -m)
+
+if [[ "$ARCH" == "aarch64" ]]; then
+    NINJA_ZIP="ninja-linux-aarch64.zip"
+elif [[ "$ARCH" == "x86_64" ]]; then
+    NINJA_ZIP="ninja-linux.zip"
+else 
+    echo "Unsupported architecture: $ARCH. Exiting."
+    exit 1
+fi
+
+NINJA_ZIP="ninja-linux-aarch64.zip"
 mkdir -p "$TOOLS_DIR/ninja"
 wget -O "$TOOLS_DIR/ninja/$NINJA_ZIP" "https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/$NINJA_ZIP"
 unzip -o "$TOOLS_DIR/ninja/$NINJA_ZIP" -d "$TOOLS_DIR/ninja"
