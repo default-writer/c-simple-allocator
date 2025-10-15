@@ -85,7 +85,7 @@ sp_ptr_t _alloc(const allocator_ptr_t* ptr, size_t size) {
     }
     allocator_t* _allocator = (allocator_t*)(*ptr);
     smart_pointer->self = (sp_ptr_t)smart_pointer;
-    smart_pointer->ref_count = 1;
+    smart_pointer->ref_count = 0;
     smart_pointer->size = size;
     smart_pointer->ptr = _ptr;
     smart_pointer->allocator = _allocator;
