@@ -23,7 +23,7 @@ This template provides a ready-to-use development environment for C++ projects o
     *   Pre-configured `test` task.
     *   Pre-configured `debug` launch configuration.
 
-## Prereqisites
+## Prerequisites
 
 - Linux/Debian
 ```bash
