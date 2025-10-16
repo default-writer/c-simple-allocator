@@ -16,6 +16,7 @@ rule link
   description = Linking $out
 
 # Build statements for object files
+build examples_embedded_structs.obj: cc examples/embedded_structs.c
 build examples_main.obj: cc examples/main.c
 build examples_thread.obj: cc examples/thread.c
 build test.obj: cc tests/test.c
@@ -25,6 +26,7 @@ build bump.obj: cc src/bump/alloc.c
 build bucket.obj: cc src/bucket/alloc.c
 
 # Build statement for the executable
+build examples_embedded_structs: link examples_embedded_structs.obj
 build examples_main: link examples_main.obj alloc.obj
 build examples_thread: link examples_thread.obj thread.obj alloc.obj
 build test_alloc: link test.obj alloc.obj
@@ -32,7 +34,7 @@ build test_bump_alloc: link test.obj bump.obj
 build test_bucket_alloc: link test.obj bucket.obj
 
 # Default target
-default examples_main examples_thread
+default examples_main examples_thread examples_embedded_structs test_alloc test_bump_alloc test_bucket_alloc
 
 # Clean rule
 rule clean

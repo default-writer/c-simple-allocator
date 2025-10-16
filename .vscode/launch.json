@@ -3,6 +3,20 @@
     "configurations": [
         {
             "program": "",
+            "name": "examples_embedded_structs",
+            "type": "lldb-dap",
+            "request": "launch",
+            "preLaunchTask": "examples_embedded_structs",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "program": "${workspaceFolder}/examples_embedded_structs.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/examples_embedded_structs"
+            }
+        },
+        {
+            "program": "",
             "name": "examples_main",
             "type": "lldb-dap",
             "request": "launch",

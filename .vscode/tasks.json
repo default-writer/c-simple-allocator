@@ -26,6 +26,30 @@
             }
         },
         {
+            "label": "examples_embedded_structs",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "examples_embedded_structs"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "examples_embedded_structs"
+                ]
+            }
+        },
+        {
             "label": "examples_main",
             "type": "shell",
             "group": {
@@ -48,8 +72,7 @@
                     "examples_main"
                 ]
             }
-        },
-        {
+        },        {
             "label": "examples_thread",
             "type": "shell",
             "group": {
