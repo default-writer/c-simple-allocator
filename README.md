@@ -23,12 +23,6 @@ This template provides a ready-to-use development environment for C++ projects o
     *   Pre-configured `test` task.
     *   Pre-configured `debug` launch configuration.
 
-## Prerequisites
-
-- Linux/Debian
-```bash
-sudo apt install lld -y
-```
 ## Environment Setup
 
 - Linux/Debian:
@@ -40,6 +34,7 @@ sudo apt install lld -y
 ```powershell
 ./bin/install.ps1
 ```
+
 ## Editors
 
 * [Visual Studio Code](https://code.visualstudio.com/)
