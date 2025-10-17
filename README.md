@@ -1,11 +1,9 @@
-# C simple allocator Template 
-
-A simple and modern C++ project template using Ninja, Clang and Visual Studio Code.
-
+# C programming language students sandbox
 
 ## Introduction
 
-Simple student sandbox in respect to (Olga Pavlova)[https://www.youtube.com/@olgapavlova] live stream.
+A simple and modern C++ project template using Ninja, Clang and Visual Studio Code.
+
 ## Environment Setup
 
 - Linux/Debian:
@@ -23,7 +21,6 @@ Simple student sandbox in respect to (Olga Pavlova)[https://www.youtube.com/@olg
 ./bin/valgrind.sh
 
 ```
-
 
 This template provides a ready-to-use development environment for C++ projects on Debian-based Linux systems (including WSL), with a focus on modern tooling.
 ## Credits
@@ -58,5 +55,5 @@ This template provides a ready-to-use development environment for C++ projects o
 
 ## History
 
-* 17-10-2025: Added valgrind support. (Live coding stream)[https://www.youtube.com/watch?v=FrgEhxLC2cg]
+* 17-10-2025: Added valgrind support.
 * 25-09-2025: Initial project setup with C/C++ sources and VS Code configuration.
