@@ -12,4 +12,4 @@
 /examples_*
 /main_*
 /test_*
-
+**/*.s
