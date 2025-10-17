@@ -2,7 +2,7 @@
 
 # Variables
 cc = clang
-cflags = -Wall -Wextra -std=c11 -g
+cflags = -Wall -Wextra -std=c11 -g -pg -O0
 ldflags = -fuse-ld=lld
 
 # Rule for compiling .c files to .o

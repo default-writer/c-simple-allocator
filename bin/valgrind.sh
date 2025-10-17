@@ -17,7 +17,11 @@ fi
 
 cwd=$(cd "$(dirname $(dirname "${BASH_SOURCE[0]}"))" &> /dev/null && pwd)
 
-ninja -f build.linux.ninja examples_doubly_linked_list && valgrind --tool=callgrind --callgrind-out-file=examples_doubly_linked_list.call callgrind_annotate --inclusive=yes --tree=callgrind --thresold=10 ./examples_doubly_linked_list
+PERF="$cwd/perf"
+
+mkdir -p $PERF
+
+ninja -f $cwd/build.linux.ninja examples_doubly_linked_list && valgrind --tool=callgrind --callgrind-out-file=$PERF/examples_doubly_linked_list.out $cwd/examples_doubly_linked_list callgrind_annotate --inclusive=yes --tree=callgrind --thresold=10
 
 [[ $SHLVL -eq 2 ]] && echo OK
 
