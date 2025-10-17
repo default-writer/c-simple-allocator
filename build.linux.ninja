@@ -7,7 +7,7 @@ ldflags = -fuse-ld=lld
 
 # Rule for compiling .c files to .o
 rule cc
-  command = $cc $cflags -S -o $out $in
+  command = $cc $cflags -c -o $out $in
   description = Compiling $in
 
 # Rule for linking .o files
@@ -40,7 +40,7 @@ default examples_main examples_thread examples_embedded_structs examples_doubly_
 
 # Clean rule
 rule clean
-  command = rm -f *.s *.o *. 2>/dev/null || exit 0
+  command = rm -f *.o *. 2>/dev/null || exit 0
   description = Clean
   generator = 1
 

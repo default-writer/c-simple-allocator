@@ -7,7 +7,7 @@ ldflags = /DEBUG
 
 # Rule for compiling .c files to .obj
 rule cc
-  command = $cc $cflags /Fa$out /c $in
+  command = $cc $cflags /c /Fo$out $in
   description = Compiling $in
 
 # Rule for linking .obj files to .exe
@@ -40,7 +40,7 @@ default examples_main examples_thread examples_embedded_structs examples_doubly_
 
 # Clean rule
 rule clean
-  command = cmd /c "del *.s *.obj *.pdb *.exe 2>nul || exit 0"
+  command = cmd /c "del *.obj *.pdb *.exe 2>nul || exit 0"
   description = Clean
   generator = 1
 
