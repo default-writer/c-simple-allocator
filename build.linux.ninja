@@ -16,6 +16,7 @@ rule link
   description = Linking $out
 
 # Build statements for object files
+build examples_doubly_linked_list.o: cc examples/doubly_linked_list.c
 build examples_embedded_structs.o: cc examples/embedded_structs.c
 build examples_main.o: cc examples/main.c
 build examples_thread.o: cc examples/thread.c
@@ -26,6 +27,7 @@ build bump.o: cc src/bump/alloc.c
 build bucket.o: cc src/bucket/alloc.c
 
 # Build statement for the executable
+build examples_doubly_linked_list: link examples_doubly_linked_list.o
 build examples_embedded_structs: link examples_embedded_structs.o
 build examples_main: link examples_main.o alloc.o
 build examples_thread: link examples_thread.o thread.o alloc.o
@@ -34,7 +36,7 @@ build test_bump_alloc: link test.o bump.o
 build test_bucket_alloc: link test.o bucket.o
 
 # Default target
-default examples_main examples_thread examples_embedded_structs test_alloc test_bump_alloc test_bucket_alloc
+default examples_main examples_thread examples_embedded_structs examples_doubly_linked_list test_alloc test_bump_alloc test_bucket_alloc 
 
 # Clean rule
 rule clean

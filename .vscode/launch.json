@@ -3,6 +3,20 @@
     "configurations": [
         {
             "program": "",
+            "name": "examples_doubly_linked_list",
+            "type": "lldb-dap",
+            "request": "launch",
+            "preLaunchTask": "examples_doubly_linked_list",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "program": "${workspaceFolder}/examples_doubly_linked_list.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/examples_doubly_linked_list"
+            }
+        },
+        {
+            "program": "",
             "name": "examples_embedded_structs",
             "type": "lldb-dap",
             "request": "launch",
