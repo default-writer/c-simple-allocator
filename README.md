@@ -2,6 +2,30 @@
 
 A simple and modern C++ project template using Ninja, Clang and Visual Studio Code.
 
+
+## Introduction
+
+Simple student sandbox in respect of (Olga Pavlova)[https://www.youtube.com/@olgapavlova]
+
+## Environment Setup
+
+- Linux/Debian:
+```bash
+./bin/install.sh
+```
+
+- Windows:
+```powershell
+./bin/install.ps1
+```
+## Performance counters
+
+```bash
+./bin/valgrind.sh
+
+```
+
+
 This template provides a ready-to-use development environment for C++ projects on Debian-based Linux systems (including WSL), with a focus on modern tooling.
 ## Credits
 
@@ -23,17 +47,6 @@ This template provides a ready-to-use development environment for C++ projects o
     *   Pre-configured `test` task.
     *   Pre-configured `debug` launch configuration.
 
-## Environment Setup
-
-- Linux/Debian:
-```bash
-./bin/install.sh
-```
-
-- Windows:
-```powershell
-./bin/install.ps1
-```
 
 ## Editors
 
@@ -46,4 +59,5 @@ This template provides a ready-to-use development environment for C++ projects o
 
 ## History
 
-*  25-09-2025: Initial project setup with C/C++ sources and VS Code configuration.
+* 17-10-2025: Added valgrind support. (Live coding stream)[https://www.youtube.com/watch?v=FrgEhxLC2cg]
+* 25-09-2025: Initial project setup with C/C++ sources and VS Code configuration.
