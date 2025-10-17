@@ -5,8 +5,7 @@ A simple and modern C++ project template using Ninja, Clang and Visual Studio Co
 
 ## Introduction
 
-Simple student sandbox in respect of (Olga Pavlova)[https://www.youtube.com/@olgapavlova]
-
+Simple student sandbox in respect to (Olga Pavlova)[https://www.youtube.com/@olgapavlova] live stream.
 ## Environment Setup
 
 - Linux/Debian:
