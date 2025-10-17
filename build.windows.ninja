@@ -10,6 +10,11 @@ rule cc
   command = $cc $cflags /c /Fo$out $in
   description = Compiling $in
 
+# Rule for generating assembly (.s) from .c sources
+rule asm
+  command = $cc $cflags -S -o $out $in
+  description = Generating assembly $out
+
 # Rule for linking .obj files to .exe
 rule link
   command = lld-link $ldflags /OUT:$out.exe $in
@@ -26,6 +31,17 @@ build thread.obj: cc src/thread/thread.c
 build bump.obj: cc src/bump/alloc.c
 build bucket.obj: cc src/bucket/alloc.c
 
+# Build statements for assembly output (.s) (optional)
+build examples_doubly_linked_list.s: asm examples/doubly_linked_list.c
+build examples_embedded_structs.s: asm examples/embedded_structs.c
+build examples_main.s: asm examples/main.c
+build examples_thread.s: asm examples/thread.c
+build test.s: asm tests/test.c
+build alloc.s: asm src/reference/alloc.c
+build thread.s: asm src/thread/thread.c
+build bump.s: asm src/bump/alloc.c
+build bucket.s: asm src/bucket/alloc.c
+
 # Build statement for the executable
 build examples_doubly_linked_list: link examples_doubly_linked_list.obj
 build examples_embedded_structs: link examples_embedded_structs.obj
@@ -35,13 +51,14 @@ build test_alloc: link test.obj alloc.obj
 build test_bump_alloc: link test.obj bump.obj
 build test_bucket_alloc: link test.obj bucket.obj
 
-# Default target
-default examples_main examples_thread examples_embedded_structs examples_doubly_linked_list test_alloc test_bump_alloc test_bucket_alloc
-
 # Clean rule
 rule clean
-  command = cmd /c "del *.obj *.pdb *.exe 2>nul || exit 0"
+  command = cmd /c "del *.s *.obj *.pdb *.exe 2>nul || exit 0"
   description = Clean
   generator = 1
 
 build clean: clean
+
+# Default target
+default clean examples_main examples_thread examples_embedded_structs examples_doubly_linked_list test_alloc test_bump_alloc test_bucket_alloc
+
