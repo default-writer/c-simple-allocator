@@ -26,6 +26,30 @@
             }
         },
         {
+            "label": "code_coverage_examples_doubly_linked_list",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "code_coverage_examples_doubly_linked_list"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "code_coverage_examples_doubly_linked_list"
+                ]
+            }
+        },
+        {
             "label": "examples_doubly_linked_list",
             "type": "shell",
             "group": {

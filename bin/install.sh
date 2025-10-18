@@ -16,6 +16,9 @@ if [[ "${BASHOPTS}" != *extdebug* ]]; then
     trap 'err_report $LINENO' ERR
 fi
 
+cwd=$(cd "$(dirname $(dirname "${BASH_SOURCE[0]}"))" &> /dev/null && pwd)
+TOOLS_DIR="${cwd}/.tools"
+
 if [[ -f "$TOOLS_DIR/llvm/clang" ]]; then
   sudo rm $TOOLS_DIR/llvm/clang
 fi
@@ -28,15 +31,18 @@ if [[ -f "$TOOLS_DIR/llvm/llvm-cov" ]]; then
   sudo rm $TOOLS_DIR/llvm/llvm-cov
 fi
 
+if [[ -f "$TOOLS_DIR/llvm/llvm-profdata" ]]; then
+  sudo rm $TOOLS_DIR/llvm/llvm-profdata
+fi
+
+rm -rf "$TOOLS_DIR"
+mkdir -p "$TOOLS_DIR/llvm"
+
 sudo apt-get remove --purge 'clang-*' 'llvm-*' 'libclang*' 'libllvm*' -y
 sudo apt --fix-broken install -f
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install -y lsb-release wget gpg gcc make unzip
-
-cwd=$(cd "$(dirname $(dirname "${BASH_SOURCE[0]}"))" &> /dev/null && pwd)
-TOOLS_DIR="${cwd}/.tools"
-mkdir -p "$TOOLS_DIR/llvm"
 
 LLVM_LANG_VERSION=20
 
@@ -55,7 +61,11 @@ if [[ ! -f "$TOOLS_DIR/llvm/lldb-dap" ]]; then
 fi
 
 if [[ ! -f "$TOOLS_DIR/llvm/llvm-cov" ]]; then
-  sudo ln -s /usr/bin/clang-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/llvm-cov
+  sudo ln -s /usr/bin/llvm-cov-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/llvm-cov
+fi
+
+if [[ ! -f "$TOOLS_DIR/llvm/llvm-profdata" ]]; then
+  sudo ln -s /usr/bin/llvm-profdata-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/llvm-profdata
 fi
 
 NINJA_VERSION="1.13.1"
@@ -75,8 +85,7 @@ mkdir -p "$TOOLS_DIR/ninja"
 wget -O "$TOOLS_DIR/ninja/$NINJA_ZIP" "https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/$NINJA_ZIP"
 unzip -o "$TOOLS_DIR/ninja/$NINJA_ZIP" -d "$TOOLS_DIR/ninja"
 rm "$TOOLS_DIR/ninja/$NINJA_ZIP"
-chmod +x "$TOOLS_DIR//ninja/ninja"
-echo "ninja installed in $TOOLS_DIR/ninja"
+chmod +x "$TOOLS_DIR/ninja/ninja"
 
 export PATH=$TOOLS_DIR:$PATH
 export CLANG="$(dirname $(whereis clang | sed 's/.* //g'))"

@@ -13,4 +13,5 @@
 /examples_*
 /main_*
 /test_*
+/code_coverage_*
 **/*.s

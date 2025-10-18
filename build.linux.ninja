@@ -5,6 +5,10 @@ cc = clang
 cflags = -Wall -Wextra -std=c11 -g -pg -O0
 ldflags = -fuse-ld=lld
 
+# split coverage options for per-edge use (avoid the -o in compile/link flags)
+coverage_cflags = -fprofile-instr-generate -fcoverage-mapping
+coverage_ldflags = -fprofile-instr-generate -fcoverage-mapping -fuse-ld=lld
+
 # Rule for compiling .c files to .o
 rule cc
   command = $cc $cflags -c -o $out $in
@@ -21,6 +25,8 @@ rule link
   description = Linking $out
 
 # Build statements for object files
+build code_coverage_examples_doubly_linked_list.o: cc examples/doubly_linked_list.c
+  cflags = $cflags $coverage_cflags
 build examples_doubly_linked_list.o: cc examples/doubly_linked_list.c
 build examples_embedded_structs.o: cc examples/embedded_structs.c
 build examples_main.o: cc examples/main.c
@@ -43,6 +49,8 @@ build bump.s: asm src/bump/alloc.c
 build bucket.s: asm src/bucket/alloc.c
 
 # Build statements for the executable (link from .o files)
+build code_coverage_examples_doubly_linked_list: link code_coverage_examples_doubly_linked_list.o
+  ldflags = $ldflags $coverage_ldflags
 build examples_doubly_linked_list: link examples_doubly_linked_list.o
 build examples_embedded_structs: link examples_embedded_structs.o
 build examples_main: link examples_main.o alloc.o
@@ -53,7 +61,7 @@ build test_bucket_alloc: link test.o bucket.o
 
 # Clean rule
 rule clean
-  command = rm -f *.s *.o examples_* test_* || true
+  command = rm -f *.s *.o code_coverage_* examples_* test_* || true
   description = Clean
   generator = 1
 
