@@ -63,7 +63,6 @@ else
     exit 1
 fi
 
-NINJA_ZIP="ninja-linux-aarch64.zip"
 mkdir -p "$TOOLS_DIR/ninja"
 wget -O "$TOOLS_DIR/ninja/$NINJA_ZIP" "https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/$NINJA_ZIP"
 unzip -o "$TOOLS_DIR/ninja/$NINJA_ZIP" -d "$TOOLS_DIR/ninja"
