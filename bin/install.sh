@@ -16,12 +16,16 @@ if [[ "${BASHOPTS}" != *extdebug* ]]; then
     trap 'err_report $LINENO' ERR
 fi
 
+if [[ -f "$TOOLS_DIR/llvm/clang" ]]; then
+  sudo rm $TOOLS_DIR/llvm/clang
+fi
+
 if [[ -f "$TOOLS_DIR/llvm/lldb-dap" ]]; then
   sudo rm $TOOLS_DIR/llvm/lldb-dap
 fi
 
-if [[ -f "$TOOLS_DIR/llvm/clang" ]]; then
-  sudo rm $TOOLS_DIR/llvm/clang
+if [[ -f "$TOOLS_DIR/llvm/llvm-cov" ]]; then
+  sudo rm $TOOLS_DIR/llvm/llvm-cov
 fi
 
 sudo apt-get remove --purge 'clang-*' 'llvm-*' 'libclang*' 'libllvm*' -y
@@ -42,12 +46,16 @@ sudo ./llvm.sh $LLVM_LANG_VERSION all
 
 rm ./llvm.sh
 
+if [[ ! -f "$TOOLS_DIR/llvm/clang" ]]; then
+  sudo ln -s /usr/bin/clang-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/clang
+fi
+
 if [[ ! -f "$TOOLS_DIR/llvm/lldb-dap" ]]; then
   sudo ln -s /usr/bin/lldb-dap-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/lldb-dap
 fi
 
-if [[ ! -f "$TOOLS_DIR/llvm/clang" ]]; then
-  sudo ln -s /usr/bin/clang-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/clang
+if [[ ! -f "$TOOLS_DIR/llvm/llvm-cov" ]]; then
+  sudo ln -s /usr/bin/clang-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/llvm-cov
 fi
 
 NINJA_VERSION="1.13.1"
