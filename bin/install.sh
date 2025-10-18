@@ -6,6 +6,7 @@ if [[ "${BASHOPTS}" != *extdebug* ]]; then
 fi
 
 err_report() {
+    rm ./llvm.sh
     cd ${source}
     echo "ERROR: $0:$*"
     exit 8
@@ -15,26 +16,38 @@ if [[ "${BASHOPTS}" != *extdebug* ]]; then
     trap 'err_report $LINENO' ERR
 fi
 
+if [[ -f "$TOOLS_DIR/llvm/lldb-dap" ]]; then
+  sudo rm $TOOLS_DIR/llvm/lldb-dap
+fi
+
+if [[ -f "$TOOLS_DIR/llvm/clang" ]]; then
+  sudo rm $TOOLS_DIR/llvm/clang
+fi
+
+sudo apt-get remove --purge 'clang-*' 'llvm-*' 'libclang*' 'libllvm*' -y
+sudo apt --fix-broken install -f
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install -y lsb-release wget gpg gcc make unzip
 
 cwd=$(cd "$(dirname $(dirname "${BASH_SOURCE[0]}"))" &> /dev/null && pwd)
 TOOLS_DIR="${cwd}/.tools"
-
 mkdir -p "$TOOLS_DIR/llvm"
+
+LLVM_LANG_VERSION=20
 
 wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
-sudo ./llvm.sh 21 all
+sudo ./llvm.sh $LLVM_LANG_VERSION all
 
-if [[ ! -f "$TOOLS_DIR/llvm/lldb-dap" ]]; then
-   sudo ln -s /usr/bin/lldb-dap-21 $TOOLS_DIR/llvm/lldb-dap
-fi
 rm ./llvm.sh
 
+if [[ ! -f "$TOOLS_DIR/llvm/lldb-dap" ]]; then
+  sudo ln -s /usr/bin/lldb-dap-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/lldb-dap
+fi
+
 if [[ ! -f "$TOOLS_DIR/llvm/clang" ]]; then
-  sudo ln -s /usr/bin/clang-21 $TOOLS_DIR/llvm/clang
+  sudo ln -s /usr/bin/clang-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/clang
 fi
 
 NINJA_VERSION="1.13.1"
