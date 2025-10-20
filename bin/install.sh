@@ -38,10 +38,6 @@ fi
 rm -rf "$TOOLS_DIR"
 mkdir -p "$TOOLS_DIR/llvm"
 
-sudo apt-get remove --purge 'clang-*' 'llvm-*' 'libclang*' 'libllvm*' -y
-sudo apt --fix-broken install -f
-sudo apt-get update -y
-sudo apt-get upgrade -y
 sudo apt-get install -y lsb-release wget gpg gcc make unzip
 
 LLVM_LANG_VERSION=20
