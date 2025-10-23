@@ -8,9 +8,11 @@
 thread_func_result thread_func(void* param) {
     (void)param;
     atomic_ulong *p = (atomic_ulong*)param;
+    unsigned long local_counter = 0;
     for (int i = 0; i < COUNTER; i++) {
-        atomic_fetch_add(p, 1);
+        local_counter += 1;
     }
+    atomic_fetch_add(p, local_counter);
     return (thread_func_result)*p;
 }
 

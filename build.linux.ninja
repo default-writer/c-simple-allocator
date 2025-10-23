@@ -2,8 +2,8 @@
 
 # Variables
 cc = clang
-cflags = -Wall -Wextra -std=c11 -g -pg -O0
-ldflags = -fuse-ld=lld
+cflags = -Wall -Wextra -std=c11 -O3 -flto -fprofile-use=default.profdata
+ldflags = -fuse-ld=lld -flto -fprofile-use=default.profdata
 
 # split coverage options for per-edge use (avoid the -o in compile/link flags)
 coverage_cflags = -fprofile-instr-generate -fcoverage-mapping
