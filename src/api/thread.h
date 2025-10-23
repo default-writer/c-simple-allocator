@@ -26,7 +26,7 @@ typedef const struct thread* thread_ptr_t;
 
 typedef struct thread
 {
-    thread_sp_ptr_t (*create)(thread_func_ptr_t func, int thread_num);
+    thread_sp_ptr_t (*create)(thread_func_ptr_t func, void* param, int thread_num);
     void (*start)(const thread_sp_ptr_t* ptr);
     void (*join)(const thread_sp_ptr_t* ptr);
     void (*destroy)(const thread_sp_ptr_t* ptr);
