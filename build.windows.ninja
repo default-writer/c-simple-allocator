@@ -60,5 +60,5 @@ rule clean
 build clean: clean
 
 # Default target
-default clean examples_main examples_thread examples_embedded_structs examples_doubly_linked_list test_alloc test_bump_alloc test_bucket_alloc
+default examples_main examples_thread examples_embedded_structs examples_doubly_linked_list test_alloc test_bump_alloc test_bucket_alloc
 
