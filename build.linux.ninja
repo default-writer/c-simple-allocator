@@ -35,6 +35,7 @@ build code_coverage_examples_doubly_linked_list.o: cc examples/doubly_linked_lis
 build examples_doubly_linked_list.o: cc examples/doubly_linked_list.c
 build examples_embedded_structs.o: cc examples/embedded_structs.c
 build examples_assembler.o: cc examples/assembler.c
+build examples_matrix.o: cc examples/matrix.c
 build examples_assembler_asm.o: nasm examples/assembler.asm
 build examples_main.o: cc examples/main.c
 build examples_thread.o: cc examples/thread.c
@@ -61,6 +62,7 @@ build code_coverage_examples_doubly_linked_list: link code_coverage_examples_dou
 build examples_doubly_linked_list: link examples_doubly_linked_list.o
 build examples_embedded_structs: link examples_embedded_structs.o
 build examples_assembler: link examples_assembler.o examples_assembler_asm.o
+build examples_matrix: link examples_matrix.o
 build examples_main: link examples_main.o alloc.o
 build examples_thread: link examples_thread.o thread.o alloc.o
 build test_alloc: link test.o alloc.o
@@ -76,4 +78,4 @@ rule clean
 build clean: clean
 
 # Default target
-default examples_main examples_assembler examples_thread examples_embedded_structs examples_doubly_linked_list test_alloc test_bump_alloc test_bucket_alloc
+default examples_main examples_matrix examples_assembler examples_thread examples_embedded_structs examples_doubly_linked_list test_alloc test_bump_alloc test_bucket_alloc
