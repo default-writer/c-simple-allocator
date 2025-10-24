@@ -2,12 +2,12 @@
 
 # Variables
 cc = clang
-coverage_cflags = -fprofile-instr-generate -fcoverage-mapping
-coverage_ldflags = -fprofile-instr-generate -fcoverage-mapping -fuse-ld=lld
+cflags = -Wall -Wextra -std=c11 -O3
+ldflags = -fuse-ld=lld
 
 # split coverage options for per-edge use (avoid the -o in compile/link flags)
-coverage_cflags = -fprofile-instr-generate -fcoverage-mapping
-coverage_ldflags = -fprofile-instr-generate -fcoverage-mapping -fuse-ld=lld
+coverage_cflags = 
+coverage_ldflags = -fuse-ld=lld
 
 # Rule for compiling .c files to .o
 rule cc
@@ -69,8 +69,8 @@ build test_bucket_alloc: link test.o bucket.o
 
 # Clean rule
 rule clean
-  command = rm -f *.s *.o code_coverage_* examples_* test_* default.profdata *.profraw || true
-  description = Clean
+  command = rm -f *.s *.o code_coverage_* examples_* test_* default.profdata *.profraw
+  description = Clean data
   generator = 1
 
 build clean: clean
