@@ -41,7 +41,7 @@ int main() {
 
   for (int i = 0; i < M; i++) {
     for (int j = 0; j < N; j++) {
-      x.vector[i].line[j] = i + j;
+      x.vector[i].line[j] = i + M*j;
       printf("%d ", x.vector[i].line[j]);
     }
     printf("\n");
@@ -49,7 +49,7 @@ int main() {
 
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < L; j++) {
-      y.vector[i].line[j] = M - i + N - j;
+      y.vector[i].line[j] = i + N*j;
       printf("%d ", y.vector[i].line[j]);
     }
     printf("\n");
