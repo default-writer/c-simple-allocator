@@ -35,6 +35,7 @@ int main() {
   for (int i = 0; i < M; i++) {
     x.vector[i].line = data + i * N;
   }
+
   for (int i = 0; i < N; i++) {
     y.vector[i].line = data + M*N + i * L;
   }
@@ -54,7 +55,6 @@ int main() {
     }
     printf("\n");
   }
-
 
   free(memory_block);
   return 0;
