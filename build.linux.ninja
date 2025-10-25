@@ -2,6 +2,7 @@
 
 # Variables
 cc = clang
+cflags = -g
 coverage_cflags = -fprofile-instr-generate -fcoverage-mapping
 coverage_ldflags = -fprofile-instr-generate -fcoverage-mapping -fuse-ld=lld
 
@@ -51,6 +52,7 @@ build examples_doubly_linked_list.s: asm examples/doubly_linked_list.c
 build examples_embedded_structs.s: asm examples/embedded_structs.c
 build examples_main.s: asm examples/main.c
 build examples_thread.s: asm examples/thread.c
+build examples_matrix.s: asm examples/matrix.c
 build test.s: asm tests/test.c
 build alloc.s: asm src/reference/alloc.c
 build thread.s: asm src/thread/thread.c

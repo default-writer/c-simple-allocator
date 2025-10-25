@@ -3,6 +3,20 @@
     "configurations": [
         {
             "program": "",
+            "name": "examples_matrix",
+            "type": "lldb-dap",
+            "request": "launch",
+            "preLaunchTask": "examples_matrix",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "program": "${workspaceFolder}/examples_matrix.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/examples_matrix"
+            }
+        },
+        {
+            "program": "",
             "name": "examples_doubly_linked_list",
             "type": "lldb-dap",
             "request": "launch",

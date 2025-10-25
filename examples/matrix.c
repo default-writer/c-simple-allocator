@@ -5,6 +5,7 @@
 #define N 5
 #define L 3
 #define MEMORY_SIZE sizeof(struct matrix) * 3 + sizeof(struct vector) * (M + N + M) + sizeof(double) * (M * N + N * L + M * L)
+#define STD_ALLOC
 
 struct vector {
   double *line;

@@ -120,7 +120,8 @@
                     "examples_main"
                 ]
             }
-        },        {
+        },        
+        {
             "label": "examples_thread",
             "type": "shell",
             "group": {
@@ -141,6 +142,30 @@
                     "-f",
                     "build.linux.ninja",
                     "examples_thread"
+                ]
+            }
+        },
+        {
+            "label": "examples_matrix",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "windows": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.windows.ninja",
+                    "examples_matrix"
+                ]
+            },
+            "linux": {
+                "command": "ninja",
+                "args": [
+                    "-f",
+                    "build.linux.ninja",
+                    "examples_matrix"
                 ]
             }
         },
