@@ -30,7 +30,6 @@ int main() {
   x = *(ptr + 0);
   y = *(ptr + 1);
   z = *(ptr + 2);
-
   x.vector = vector_ptr + 0;
   y.vector = vector_ptr + M;
   z.vector = vector_ptr + M + N;
