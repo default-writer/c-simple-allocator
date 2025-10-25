@@ -6,7 +6,7 @@
 #define L 3
 
 struct vector {
-  double *line;
+  int *line;
 };
 
 struct matrix {
@@ -20,12 +20,12 @@ int main() {
   void* memory_block = calloc(1,
         sizeof(struct matrix) * 2 +
         sizeof(struct vector) * (M + N) +
-        sizeof(double) * M * N +
-        sizeof(double) * N * L);
+        sizeof(int) * M * N +
+        sizeof(int) * N * L);
 
   struct matrix *ptr = (struct matrix *)memory_block;
-  struct vector *vector = (struct vector *)((struct matrix*)ptr + 2);
-  double* data = (double *)((struct vector*)ptr + M + N);
+  struct vector *vector = (struct vector *)(ptr + 2);
+  int* data = (int *)((struct vector*)vector + M + N);
 
   x = *(ptr + 0); // MxN
   y = *(ptr + 1); // NxL
@@ -38,6 +38,23 @@ int main() {
   for (int i = 0; i < N; i++) {
     y.vector[i].line = data + M*N + i * L;
   }
+
+  for (int i = 0; i < M; i++) {
+    for (int j = 0; j < N; j++) {
+      x.vector[i].line[j] = i + j;
+      printf("%d ", x.vector[i].line[j]);
+    }
+    printf("\n");
+  }
+
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < L; j++) {
+      y.vector[i].line[j] = M - i + N - j;
+      printf("%d ", y.vector[i].line[j]);
+    }
+    printf("\n");
+  }
+
 
   free(memory_block);
   return 0;
