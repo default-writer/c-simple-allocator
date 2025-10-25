@@ -1,7 +1,7 @@
 default rel
 
 section .rodata
-    format_header: db 10, "matrix %s (%dx%d):", 10, 0
+    format_header: db "matrix %s (%dx%d):", 10, 0
     format_float:  db "%8.2f ", 0
     format_newline: db 10, 0
 
@@ -21,7 +21,7 @@ print_matrix:
     mov     [rbp - 16], edx     ; int cols
     mov     [rbp - 24], rcx     ; const char* name
 
-    ; printf("\nMatrix %s (%dx%d):\n", name, rows, cols)
+    ; printf("matrix %s (%dx%d):\n", name, rows, cols)
     lea     rdi, [rel format_header]
     mov     rsi, [rbp - 24]
     mov     edx, [rbp - 12]
