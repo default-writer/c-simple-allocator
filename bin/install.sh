@@ -60,6 +60,10 @@ if [[ ! -f "$TOOLS_DIR/llvm/llvm-cov" ]]; then
   sudo ln -s /usr/bin/llvm-cov-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/llvm-cov
 fi
 
+if [[ ! -f "$TOOLS_DIR/llvm/llvm-objdump" ]]; then
+  sudo ln -s /usr/bin/llvm-objdump-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/llvm-objdump
+fi
+
 if [[ ! -f "$TOOLS_DIR/llvm/llvm-profdata" ]]; then
   sudo ln -s /usr/bin/llvm-profdata-$LLVM_LANG_VERSION $TOOLS_DIR/llvm/llvm-profdata
 fi
